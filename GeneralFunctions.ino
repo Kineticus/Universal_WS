@@ -10,18 +10,18 @@ void readPots(){
   brightnessTotal = 0;
   
   //filter noise
-  if (((tempValue > brightnessValue + 23) || (tempValue + 23 < brightnessValue)))
+  if (((tempValue > brightnessValue + SENSITIVITY) || (tempValue + SENSITIVITY < brightnessValue)))
   {
     //check minimum value - is 12 it?
     brightnessValue = tempValue;
-    tempValue = constrain(tempValue, 20, 1005);
+    tempValue = constrain(tempValue, BRIGHT_FLOOR, 1005);
 
     if (INVERT_BRIGHT == 1)
     {
-      tempValue = map(tempValue, 20, 1005, 255, 0);
+      tempValue = map(tempValue, BRIGHT_FLOOR, 1005, 255, 0);
     }else
     {
-      tempValue = map(tempValue, 20, 1005, 0, 255);
+      tempValue = map(tempValue, BRIGHT_FLOOR, 1005, 0, 255);
     }
 
     currBrightness = tempValue;

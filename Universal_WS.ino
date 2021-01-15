@@ -95,15 +95,17 @@ Future Improvements:
 
 ***************************************************************************************/
 
-#define PIN_BRIGHT 		A1		//Brightness Potentiometer Wiper
+#define PIN_BRIGHT 		A2		//Brightness Potentiometer Wiper
 #define INVERT_BRIGHT 	0		//Brightness direction
-#define PIN_POWER_A		A3		//AUX 5v
+#define PIN_POWER_A		A1		//AUX 5v
 #define PIN_GROUND_A	A0		//AUX Ground
 #define SPEED_KNOB 		1 		//Enable 2nd Potentiometer for Speed (0 = OFF, 1 = ON)
-#define PIN_SPEED		A6		//
+#define PIN_SPEED		A5		//
 #define INVERT_SPEED 	0		//Speed direction
-#define PIN_POWER_B		A5		//AUX 5v
+#define PIN_POWER_B		A3		//AUX 5v
 #define PIN_GROUND_B	A4		//AUX Ground
+#define SENSITIVITY		5
+#define BRIGHT_FLOOR	0
 
 /***************************************************************************************
   !!!! >>>>> LOOK HERE <<<<<< !!!! ----- P I X E L   W I R I N G    S E T U P
@@ -289,6 +291,11 @@ void setup()
 	//Read from the onboard persistant memory for last program position
 	lastSavedEncoderPosition = EEPROM.read(1);
 	
+	if (lastSavedEncoderPosition > upperLimit)
+	{
+		lastSavedEncoderPosition = 1;
+	}
+	
 	//Set program to value from memory (a new board has 0 in EEPROM for each slot)
 	encoderPos = lastSavedEncoderPosition;
 	oldEncPos = lastSavedEncoderPosition;
@@ -301,12 +308,12 @@ void loop()
 {
 
 	//SMOOTH OPERATOR
-	brightnessTotal += analogRead(A1);
+	brightnessTotal += analogRead(PIN_BRIGHT);
 	brightnessCount += 1;
 
 	if (SPEED_KNOB == 1)
   	{
-		speedTotal += analogRead(A6);
+		speedTotal += analogRead(PIN_SPEED);
 		speedCount += 1;
 	}
 
