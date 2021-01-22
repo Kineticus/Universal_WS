@@ -363,13 +363,16 @@ void callColorFunction()
 	// select color
   	switch (encoderPos-1) {
 		case 0:
-			Amber3();
+			//Amber3();
+			singleColor(currBrightness, currBrightness/7, 0);
 			break;
 		case 1:           //Single Color (1-6)
-			Amber4();
+			//Amber4();
+			singleColor(currBrightness, currBrightness/5, 0);
 			break;
 		case 2:
-			Amber5();
+			//Amber5();
+			singleColor(currBrightness, currBrightness/4, currBrightness/25);
 			break;
 		case 3:
 			WarmWhite(); //
