@@ -13,6 +13,13 @@ void singleColor(int redValue, int greenValue, int blueValue)
   }
 }
 
+void AmberSmatter(int Spacing){
+  for(uint16_t i=0; i<strip.numPixels(); i = i + Spacing) {
+    strip.setPixelColor(i, strip.Color(currBrightness, currBrightness/8,0)); //Amber 
+  }
+}
+
+/*
 void Green(){
   for(uint16_t i=0; i<strip.numPixels(); i++) {
     strip.setPixelColor(i, strip.Color(0,currBrightness,0));//Green
@@ -45,12 +52,6 @@ void Amber(){
   effectFunction();
 }
 
-void AmberSmatter(int Spacing){
-  for(uint16_t i=0; i<strip.numPixels(); i = i + Spacing) {
-    strip.setPixelColor(i, strip.Color(currBrightness, currBrightness/8,0)); //Amber 
-  }
-}
-
 void Amber2(){
   for(uint16_t i=0; i<strip.numPixels(); i++) {
     strip.setPixelColor(i, strip.Color(currBrightness, currBrightness/8, 0)); //Amber 
@@ -58,14 +59,12 @@ void Amber2(){
   effectFunction();
 }
 
-/*
 void Amber3(){
   for(uint16_t i=0; i<strip.numPixels(); i++) {
     strip.setPixelColor(i, strip.Color(currBrightness, currBrightness/7, 0)); //Amber  
   }
   effectFunction();
 }
-
 
 void Amber4(){
   for(uint16_t i=0; i<strip.numPixels(); i++) {
@@ -80,8 +79,6 @@ void Amber5(){
   }
   effectFunction();
 }
-
-*/
 
 void WarmWhite(){
   for(uint16_t i=0; i<strip.numPixels(); i++) {
@@ -108,6 +105,8 @@ void Purple(){
   }  
   effectFunction();
 }
+
+*/
 
 /***************************************************************************************
   Rainbow Colors 

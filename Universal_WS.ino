@@ -364,6 +364,7 @@ void callColorFunction()
   	switch (encoderPos-1) {
 		case 0:
 			//Amber3();
+			//Adjust hue with currSpeed
 			singleColor(currBrightness, currBrightness/7, 0);
 			break;
 		case 1:           //Single Color (1-6)
@@ -375,25 +376,32 @@ void callColorFunction()
 			singleColor(currBrightness, currBrightness/4, currBrightness/25);
 			break;
 		case 3:
-			WarmWhite(); //
+			//WarmWhite();
+			singleColor(currBrightness, currBrightness/3.5,currBrightness/15);
 			break;
 		case 4:
-			NuetralWhite(); //Amber 5 + a bit
+			//NuetralWhite(); 
+			singleColor(currBrightness, currBrightness/3,currBrightness/10);
 			break;
 		case 5:
-			White(); //Warm White
+			//White(); 
+			singleColor(currBrightness, currBrightness/2.75,currBrightness/8);
 			break;
 		case 6:
-			Green();
+			//Green();
+			singleColor(0,currBrightness,0);
 			break;
 		case 7:
-			Blue();
+			//Blue();
+			singleColor(0,0,currBrightness);
 			break;
 		case 8:           
-			Teal();
+			//Teal();
+			singleColor(0,currBrightness/2,currBrightness/2);
 			break;
 		case 9:
-			Purple();
+			//Purple();
+			singleColor(currBrightness,0,currBrightness/2);
 			break;
 		case 10:
 			RainbowFlowFull();
@@ -566,13 +574,16 @@ void callColorFunction()
 			GlowingAmber();
 			break;
 		case 62:
-			Red();
+			//Red();
+			singleColor(currBrightness,0,0);
 			break;
 		case 63:
-			Amber();
+			//Amber();
+			singleColor(currBrightness, currBrightness/10,0);
 			break;
 		case 64:
-			Amber2();
+			//Amber2();
+			singleColor(currBrightness, currBrightness/8, 0);
 			break;
 	}
 }
