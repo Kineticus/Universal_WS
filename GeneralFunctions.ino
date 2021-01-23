@@ -1,7 +1,7 @@
 /***************************************************************************************
   Brightness
 ***************************************************************************************/
-void readPots(){
+void smoothOperator(){
   
   //tempValue = analogRead(A1);
 
@@ -26,29 +26,36 @@ void readPots(){
 
     currBrightness = tempValue;
 
-  }
+  };
   
-
-
   if (SPEED_KNOB == 1)
   {
     tempValue = speedTotal / speedCount;
     speedCount = 0;
     speedTotal = 0;
 
+    //Serial.print("rawSpeed: ");
+    Serial.print(tempValue);
+    Serial.print(",");
+
     if (INVERT_SPEED == 1)
     {
       tempValue = map(tempValue, 1023, 0, 0, 1023);
     }
 
-    if (((tempValue > speedValue + 23) || (tempValue + 23 < speedValue)))
+    if (((tempValue > speedValue + SENSITIVITY) || (tempValue + SENSITIVITY < speedValue)))
     {
-      tempValue = constrain(tempValue, 25, 1005);
-      tempValue = map(tempValue, 25, 1005, 250, 0);
+      speedValue = tempValue;
+
+      tempValue = constrain(tempValue, 15, 1015);
+      tempValue = map(tempValue, 15, 1015, 100, 0);
       currSpeed = tempValue;
     }
     
   }
+
+  //Serial.print("currSpeed: ");
+  Serial.println(currSpeed);
 }
 
 
@@ -276,9 +283,22 @@ void fadeEffect(float fadeAmount, int& R, int& G, int& B)
 }
 
 /***************************************************************************************
-  Encoder
+  Encoder / Analog Inputs
 ***************************************************************************************/
-void GetEncoderButtonValue(){
+void readInputs(){
+
+  //Analog input running averages and counts, these are processed in Smooth Operator
+  brightnessTotal += analogRead(PIN_BRIGHT);
+	brightnessCount += 1;
+
+	if (SPEED_KNOB == 1)
+  	{
+		speedTotal += analogRead(PIN_SPEED);
+		speedCount += 1;
+	}
+
+  //Check for button presses each time. This makes sure we don't miss one / feels responsive
+  
   encoderButton = digitalRead(4); // read digital pin 4
   
   // if encoder button is pressed, set encoder position = 1 (1st pattern)

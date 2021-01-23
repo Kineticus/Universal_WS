@@ -146,7 +146,7 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(maxPixels, PIN_DATA, NEO_RGB + NEO_K
 int currBrightness = 0;
 int tempValue = 0;
 int brightnessValue = 0;
-int speedValue = 0;
+int speedValue = 1023;
 int currSpeed = 2;
 int currProgram = 2;
 int currFade = 0;
@@ -235,6 +235,7 @@ void setup()
   /***************************************************************************************
     General Setup
   ***************************************************************************************/
+ 	Serial.begin(115200);
 
 	//Randomize the Simplex Noise values for lava lamp style patterns
 	//Create a random seed by reading nearby electric noise on the analog ports
@@ -299,6 +300,7 @@ void setup()
 	//Set program to value from memory (a new board has 0 in EEPROM for each slot)
 	encoderPos = lastSavedEncoderPosition;
 	oldEncPos = lastSavedEncoderPosition;
+	readInputs();
 }
 
 /***************************************************************************************
@@ -307,18 +309,8 @@ void setup()
 void loop()
 {
 
-	//SMOOTH OPERATOR
-	brightnessTotal += analogRead(PIN_BRIGHT);
-	brightnessCount += 1;
-
-	if (SPEED_KNOB == 1)
-  	{
-		speedTotal += analogRead(PIN_SPEED);
-		speedCount += 1;
-	}
-
-	//Get encoder button value
-	GetEncoderButtonValue();
+	//Read potentiometer values
+	readInputs();
 
 	//Framerate Control
 	if (fpsMillis < millis())
@@ -327,8 +319,8 @@ void loop()
 		//1 second = 1000 millis. 1000 millis / 60 fps = 16 millis between frames
 		fpsMillis = millis() + 16;
 
-		//Read Potentiometer & Encoder
-		readPots();
+		//Calculate average potentiometer readings
+		smoothOperator();
 
 		//Check to see if Encoder value has changed
 		if (encoderPos != oldEncPos)
