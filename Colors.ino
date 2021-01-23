@@ -115,42 +115,42 @@ void Purple(){
 ***************************************************************************************/
 void RainbowOneYoffset(){
   spaceinc = 0.03;
-  timeinc = (0.000025 * currSpeed);
+  timeinc = (0.000025 * (currSpeed * 2));
   yoffset += timeinc; 
   //xoffset += timeinc;
   SimplexNoisePatternInterpolated(spaceinc, timeinc, yoffset, xoffset);    
 }
 void RainbowTwoYoffset(){
   spaceinc = 0.07;
-  timeinc = (0.000025 * currSpeed);
+  timeinc = (0.000025 * (currSpeed * 2));
   yoffset += timeinc; ; 
   //xoffset += timeinc;
   SimplexNoisePatternInterpolated(spaceinc, timeinc, yoffset, xoffset);    
 }
 void RainbowThreeXoffset(){
   spaceinc = 0.07;
-  timeinc = (0.000025 * currSpeed);
+  timeinc = (0.000025 * (currSpeed * 2));
   //yoffset += timeinc; 
   xoffset += timeinc;
   SimplexNoisePatternInterpolated(spaceinc, timeinc, yoffset, xoffset);    
 }
 void RainbowFourXoffset(){
   spaceinc = 0.03;
-  timeinc = (0.000025 * currSpeed);
+  timeinc = (0.000025 * (currSpeed * 2));
   //yoffset += timeinc; 
   xoffset += timeinc;
   SimplexNoisePatternInterpolated(spaceinc, timeinc, yoffset, xoffset);    
 }
 void RainbowBigXoffset(){
   spaceinc = 0.12;
-  timeinc = (0.000025 * currSpeed);
+  timeinc = (0.000025 * (currSpeed * 2));
   //yoffset += timeinc; 
   xoffset += timeinc;
   SimplexNoisePatternInterpolated(spaceinc, timeinc, yoffset, xoffset);    
 }
 void RainbowBigYoffset(){
   spaceinc = 0.12;
-  timeinc = (0.000025 * currSpeed);
+  timeinc = (0.000025 * (currSpeed * 2));
   yoffset += timeinc; ; 
   //xoffset += timeinc;
   SimplexNoisePatternInterpolated(spaceinc, timeinc, yoffset, xoffset);    
@@ -596,7 +596,7 @@ void GlowingAmber(){
 
   if (currMillis < millis())
   {
-    currMillis = millis() + (255 - currSpeed);
+    currMillis = millis() + (100 - currSpeed);
     hTemp = random(maxPixels);
 
     if (currBrightness > 0)
@@ -633,7 +633,7 @@ void sparkleRasta(){
     //find lucky pixel
     if (currMillis < millis())
     {
-      currMillis = millis() + (255 - currSpeed);
+      currMillis = millis() + (100 - currSpeed);
       hTemp = random(maxPixels);
       tempStep += 1;
       if (tempStep > 9)
@@ -688,7 +688,7 @@ void GlowingAmberWhite(){
 
     if (currMillis < millis())
     {
-      currMillis = millis() + (255 - currSpeed);
+      currMillis = millis() + (100 - currSpeed);
       hTemp = random(maxPixels);
       tempStep += 1;
       if (tempStep > 4)
@@ -741,7 +741,7 @@ void GlowingAmberWhite(){
 void PurpleGoldSparkle(){
     if (currMillis < millis())
     {
-      currMillis = millis() + (255 - currSpeed);
+      currMillis = millis() + (100 - currSpeed);
       hTemp = random(maxPixels);
       tempStep += 1;
       if (tempStep > 1)
@@ -790,7 +790,7 @@ void PurpleGoldSparkle(){
 void PurpleGreen(){
   if (currMillis < millis())
   {
-    currMillis = millis() + (255 - currSpeed);
+    currMillis = millis() + (100 - currSpeed);
     hTemp = random(maxPixels);
     tempStep += 1;
     if (tempStep > 1)
@@ -838,7 +838,7 @@ void SparkleBlueGreen(){
     //find lucky pixel
     if (currMillis < millis())
     {
-      currMillis = millis() + (255 - currSpeed);
+      currMillis = millis() + (100 - currSpeed);
       hTemp = random(maxPixels);
 
       if (currBrightness > 0)
@@ -893,7 +893,7 @@ void SparkleBlueGreen(){
 void colorWipe(){
   if (currMillis < millis())
   {
-    if (currSpeed > 2){
+    if (currSpeed > 1){
       tempStep += 1;
     }
     if (tempStep > maxPixels)
@@ -902,7 +902,7 @@ void colorWipe(){
       hTemp = h;
       h = random(1000) / 1000.0;
     }
-    currMillis = millis() + (255 - currSpeed);
+    currMillis = millis() + (255 - (currSpeed * 2));
   }
   hsv2rgb(float(h), 1, (float(currBrightness)/255.0), red, green, blue);
 
@@ -949,7 +949,7 @@ void colorWipeBounce(){
       }
       h = hOld;
     }
-    currMillis = millis() + (255 - currSpeed);
+    currMillis = millis() + (255 - (currSpeed * 2));
   }
   
   hsv2rgb(float(h), 1, (float(currBrightness)/255.0), red, green, blue);
@@ -1203,7 +1203,7 @@ void TwinkleRainbow()
 {
   if (currMillis < millis())
     {
-      currMillis = millis() + (255 - currSpeed);
+      currMillis = millis() + (255 - (currSpeed * 2));
       hTemp = random(maxPixels);
       h += .0001 * currSpeed;
       if (h > 1)
@@ -1338,7 +1338,7 @@ void waterFlow()
 
   hsv2rgb(float(h), 1, (float(currBrightness)/255.0), red, green, blue);
   strip.setPixelColor(0, strip.Color(red,green,blue));
-  currMillis = millis() + 20 + ((255 - currSpeed) * 2);
+  currMillis = millis() + ((100 - currSpeed) * 4);
   }
 }
 
@@ -1364,7 +1364,7 @@ void rainbowFlag()
     hsv2rgb(float(h), 1, (float(currBrightness)/255.0), red, green, blue);
     random(1); //VOOODOOO
     strip.setPixelColor(0, strip.Color(red,green,blue));
-    currMillis = millis() + 20 + ((255 - currSpeed) * 2);
+    currMillis = millis() + ((100 - currSpeed) * 4);
   }
   
   
@@ -1457,6 +1457,6 @@ void waterFlag()
         strip.setPixelColor(0, strip.Color(0,0,currBrightness));
         break;
     }
-    currMillis = millis() + 20 + ((255 - currSpeed) * 2);
+    currMillis = millis() + 20 + ((125 - currSpeed) * 2);
   }
 }

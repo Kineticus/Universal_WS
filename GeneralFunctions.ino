@@ -34,10 +34,6 @@ void smoothOperator(){
     speedCount = 0;
     speedTotal = 0;
 
-    //Serial.print("rawSpeed: ");
-    Serial.print(tempValue);
-    Serial.print(",");
-
     if (INVERT_SPEED == 1)
     {
       tempValue = map(tempValue, 1023, 0, 0, 1023);
@@ -53,9 +49,6 @@ void smoothOperator(){
     }
     
   }
-
-  //Serial.print("currSpeed: ");
-  Serial.println(currSpeed);
 }
 
 
@@ -298,7 +291,7 @@ void readInputs(){
 	}
 
   //Check for button presses each time. This makes sure we don't miss one / feels responsive
-  
+
   encoderButton = digitalRead(4); // read digital pin 4
   
   // if encoder button is pressed, set encoder position = 1 (1st pattern)

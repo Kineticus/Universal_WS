@@ -11,6 +11,9 @@ Description: Controls a WS281X based strands of LEDs. Accepts input from a Rotar
     
 Change log: 
 
+Version 1.9 - Brian - Reduced number of total functions, simplified structure, small fixes
+	1/23/2021			This was sent to Bryson and Lauren
+
 Version 1.8 - Brian - Added more patterns and "AmberSmatter" options to color flow
 	12/16/2020			This will be sent to James and Susan
 						
@@ -173,7 +176,7 @@ int brightnessRead = 0;
   Encoder Variables
 ***************************************************************************************/
 
-int upperLimit = 64; // max number of patterns (encoder)
+int upperLimit = 62; // max number of patterns (encoder)
 int lowerLimit = 1; // minimum number of patterns (encoder)
 int encoderButton = 49;
 byte lastSavedEncoderPosition = 0;
@@ -235,7 +238,7 @@ void setup()
   /***************************************************************************************
     General Setup
   ***************************************************************************************/
- 	Serial.begin(115200);
+ 	//Serial.begin(115200);
 
 	//Randomize the Simplex Noise values for lava lamp style patterns
 	//Create a random seed by reading nearby electric noise on the analog ports
@@ -354,46 +357,50 @@ void callColorFunction()
 {
 	// select color
   	switch (encoderPos-1) {
+		
+		//Single Colors
 		case 0:
-			//Amber3();
-			//Adjust hue with currSpeed
-			singleColor(currBrightness, currBrightness/7, 0);
+			//Red > Amber
+			singleColor(currBrightness,currBrightness * (float(currSpeed) / 350),0);
 			break;
-		case 1:           //Single Color (1-6)
-			//Amber4();
-			singleColor(currBrightness, currBrightness/5, 0);
+		case 1:  
+			//Amber > Warm White
+			singleColor(currBrightness, (currBrightness/5) + (currBrightness * (float(currSpeed) / 420)), (currBrightness/30) + (currBrightness * (float(currSpeed) / 1400)));
 			break;
 		case 2:
-			//Amber5();
-			singleColor(currBrightness, currBrightness/4, currBrightness/25);
+			//Warm White > Neutral White
+			singleColor(currBrightness, (currBrightness/3) + (currBrightness * (float(currSpeed) / 400)), (currBrightness/12) + (currBrightness * (float(currSpeed) / 1200)));
+			//singleColor(currBrightness, currBrightness/4, currBrightness/25);
 			break;
 		case 3:
-			//WarmWhite();
-			singleColor(currBrightness, currBrightness/3.5,currBrightness/15);
+			//Neutral White > Day Light
+			singleColor(currBrightness, (currBrightness/2.5) + (currBrightness * (float(currSpeed) / 300)), (currBrightness/8) + (currBrightness * (float(currSpeed) / 350)));
+			//singleColor(currBrightness, currBrightness/3.5,currBrightness/15);
 			break;
 		case 4:
-			//NuetralWhite(); 
-			singleColor(currBrightness, currBrightness/3,currBrightness/10);
+			//Day Light > Cool Light
+			singleColor(currBrightness - (currSpeed / 5), (currBrightness/2) + (currBrightness * (float(currSpeed) / 300)), (currBrightness/4) + (currBrightness * (float(currSpeed) / 175)));
+			//singleColor(currBrightness, currBrightness/3,currBrightness/10);
 			break;
 		case 5:
-			//White(); 
-			singleColor(currBrightness, currBrightness/2.75,currBrightness/8);
+			//Red > Yellow
+			singleColor(currBrightness,currBrightness * (float(currSpeed) / 100),0);
 			break;
 		case 6:
-			//Green();
-			singleColor(0,currBrightness,0);
+			//Green > Teal
+			singleColor(0,currBrightness,currBrightness * (float(currSpeed) / 100));
 			break;
 		case 7:
-			//Blue();
-			singleColor(0,0,currBrightness);
+			//Blue > Teal
+			singleColor(0,currBrightness * (float(currSpeed) / 100),currBrightness);
 			break;
 		case 8:           
-			//Teal();
-			singleColor(0,currBrightness/2,currBrightness/2);
+			//Red > Purple
+			singleColor(currBrightness,0,currBrightness * (float(currSpeed) / 100));
 			break;
 		case 9:
-			//Purple();
-			singleColor(currBrightness,0,currBrightness/2);
+			//Blue > Purple
+			singleColor(currBrightness * (float(currSpeed) / 100),0,currBrightness);
 			break;
 		case 10:
 			RainbowFlowFull();
@@ -406,7 +413,7 @@ void callColorFunction()
 			PurpleGoldSparkle();
 			break;
 		case 13://Two Colors=
-			SteadyAlternatingColors(currBrightness,0,currBrightness/1.5, currBrightness, currBrightness/5, 0, (currSpeed + 1) / 6);
+			SteadyAlternatingColors(currBrightness,0,currBrightness/1.5, currBrightness, currBrightness/3, 0, (currSpeed + 1) / 6);
 			break;
 		case 14:
 			SteadyAlternatingColors(currBrightness/2,currBrightness/2,currBrightness/3, currBrightness, currBrightness/4, 0, (currSpeed + 1) / 6);
@@ -566,16 +573,13 @@ void callColorFunction()
 			GlowingAmber();
 			break;
 		case 62:
-			//Red();
-			singleColor(currBrightness,0,0);
+			
 			break;
 		case 63:
-			//Amber();
-			singleColor(currBrightness, currBrightness/10,0);
+
 			break;
 		case 64:
-			//Amber2();
-			singleColor(currBrightness, currBrightness/8, 0);
+
 			break;
 	}
 }
