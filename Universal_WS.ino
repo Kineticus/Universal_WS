@@ -134,7 +134,7 @@ Future Improvements:
 #define UPSAMPLE 		3  		//1 = No Upsampling, up to maximum of 4
 #define PIN_DATA 		6		//WS28XX data line
 
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(maxPixels, PIN_DATA, NEO_RGB + NEO_KHZ800);
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(maxPixels + 15, PIN_DATA, NEO_RGB + NEO_KHZ800);
 
 
 /***************************************************************************************
@@ -160,6 +160,7 @@ long brightnessTotal = 0;
 int brightnessCount = 0;
 long speedTotal = 0;
 int speedCount = 0;
+int writeDelay = 0;
 byte tempStepDirection = 0;
 
 int fadeDirection = 0; // 1 or 0, positive or negative
@@ -318,9 +319,19 @@ void loop()
 	//Framerate Control
 	if (fpsMillis < millis())
   	{
-		
 		//1 second = 1000 millis. 1000 millis / 60 fps = 16 millis between frames
 		fpsMillis = millis() + 16;
+
+		//Check to see if we should write the current encoder value to EEPROM
+		if (writeDelay > 1)
+		{
+			writeDelay --;
+		}
+		else if (writeDelay == 1)
+		{
+			EEPROM.write(1, encoderPos);
+			writeDelay = 0;
+		}
 
 		//Calculate average potentiometer readings
 		smoothOperator();
@@ -335,9 +346,9 @@ void loop()
 			if (encoderPos < lowerLimit) {
 				encoderPos = upperLimit;
 			}
-			//Store the encoder position
-			EEPROM.write(1, encoderPos);
-			//StorePattern();
+
+			//Start countdown to store encoder setting to EEPROM
+			writeDelay = 200;
 			
 			//Update the oldEncPos value to current
 			oldEncPos = encoderPos;

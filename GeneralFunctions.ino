@@ -51,17 +51,6 @@ void smoothOperator(){
   }
 }
 
-
-void StorePattern(){
-    // if lastSavedEncoderPosition is a valid pattern
-    // && lastSavedEncoderPosition is not the same as current encoder
-    if (lastSavedEncoderPosition != encoderPos){
-		lastSavedEncoderPosition = encoderPos;
-      	EEPROM.write(1, encoderPos);
-    } 
-}
-
-
 int fastfloor(float n) {
   return n > 0 ? (int) n : (int) n - 1;
 }
