@@ -136,7 +136,7 @@ Future Improvements:
 
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(maxPixels + 5, PIN_DATA, NEO_RGB + NEO_KHZ800);
 
-byte ledTemp[(maxPixels / UPSAMPLE) + 3][3];
+byte ledTemp[(maxPixels / UPSAMPLE) + 5][3];
 
 /***************************************************************************************
  						>>>>>> END OF CONFIGURATION <<<<<<
@@ -180,7 +180,7 @@ int brightnessRead = 0;
   Encoder Variables
 ***************************************************************************************/
 
-int upperLimit = 62; // max number of patterns (encoder)
+byte upperLimit = 62; // max number of patterns (encoder)
 int lowerLimit = 1; // minimum number of patterns (encoder)
 int encoderButton = 49;
 byte lastSavedEncoderPosition = 0;
@@ -402,7 +402,7 @@ void loop()
 			//Serial.print("INTERFADE ");
 			//Serial.println(interfade);
 		}
-		
+
 		if (interfade > 0)
 		{
 			interfade --;
