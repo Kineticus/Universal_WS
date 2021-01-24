@@ -13,100 +13,15 @@ void singleColor(int redValue, int greenValue, int blueValue)
   }
 }
 
+/***************************************************************************************
+  Utilities / Effects
+***************************************************************************************/
+
 void AmberSmatter(int Spacing){
   for(uint16_t i=0; i<strip.numPixels(); i = i + Spacing) {
     strip.setPixelColor(i, strip.Color(currBrightness, currBrightness/8,0)); //Amber 
   }
 }
-
-/*
-void Green(){
-  for(uint16_t i=0; i<strip.numPixels(); i++) {
-    strip.setPixelColor(i, strip.Color(0,currBrightness,0));//Green
-  }
-  effectFunction();    
-}
-void Red(){
-  for(uint16_t i=0; i<strip.numPixels(); i++) {
-    strip.setPixelColor(i, strip.Color(currBrightness,0,0));//Red  
-  }
-  effectFunction();
-}
-void Blue(){ 
-  for(uint16_t i=0; i<strip.numPixels(); i++) {
-    strip.setPixelColor(i, strip.Color(0,0,currBrightness));//Blue 
-  }
-  effectFunction();
-}
-void White(){
-  for(uint16_t i=0; i<strip.numPixels(); i++) {
-    //strip.setPixelColor(i, strip.Color(currBrightness, currBrightness/2,currBrightness/3)); //Snow White  
-	strip.setPixelColor(i, strip.Color(currBrightness, currBrightness/2.75,currBrightness/8)); //Warmer White
-  }
-  effectFunction();
-}
-void Amber(){
-  for(uint16_t i=0; i<strip.numPixels(); i++) {
-    strip.setPixelColor(i, strip.Color(currBrightness, currBrightness/10,0)); //Amber 
-  }
-  effectFunction();
-}
-
-void Amber2(){
-  for(uint16_t i=0; i<strip.numPixels(); i++) {
-    strip.setPixelColor(i, strip.Color(currBrightness, currBrightness/8, 0)); //Amber 
-  }
-  effectFunction();
-}
-
-void Amber3(){
-  for(uint16_t i=0; i<strip.numPixels(); i++) {
-    strip.setPixelColor(i, strip.Color(currBrightness, currBrightness/7, 0)); //Amber  
-  }
-  effectFunction();
-}
-
-void Amber4(){
-  for(uint16_t i=0; i<strip.numPixels(); i++) {
-     strip.setPixelColor(i, strip.Color(currBrightness, currBrightness/5, 0)); //Amber  
-  }
-  effectFunction();
-}
-
-void Amber5(){
-  for(uint16_t i=0; i<strip.numPixels(); i++) {
-    strip.setPixelColor(i, strip.Color(currBrightness, currBrightness/4, currBrightness/25)); //Amber 
-  }
-  effectFunction();
-}
-
-void WarmWhite(){
-  for(uint16_t i=0; i<strip.numPixels(); i++) {
-    strip.setPixelColor(i, strip.Color(currBrightness, currBrightness/3.5,currBrightness/15)); //White  
-  }
-  effectFunction();
-}
-void NuetralWhite(){
-  for(uint16_t i=0; i<strip.numPixels(); i++) {
-    strip.setPixelColor(i, strip.Color(currBrightness, currBrightness/3,currBrightness/10)); //White  
-  }
-  effectFunction();
-}
-void Teal(){
-  for(uint16_t i=0; i<strip.numPixels(); i++) {
-    strip.setPixelColor(i, strip.Color(0,currBrightness/2,currBrightness/2));//Green & Blue
-  }
-  effectFunction();  
-}
-
-void Purple(){
-  for(uint16_t i=0; i<strip.numPixels(); i++) {
-    strip.setPixelColor(i, strip.Color(currBrightness,0,currBrightness/2));//Red & Blue
-  }  
-  effectFunction();
-}
-
-*/
 
 /***************************************************************************************
   Rainbow Colors 
@@ -902,7 +817,7 @@ void colorWipe(){
       hTemp = h;
       h = random(1000) / 1000.0;
     }
-    currMillis = millis() + (255 - (currSpeed * 2));
+    currMillis = millis() + (100 - currSpeed) * 10;
   }
   hsv2rgb(float(h), 1, (float(currBrightness)/255.0), red, green, blue);
 
@@ -949,7 +864,7 @@ void colorWipeBounce(){
       }
       h = hOld;
     }
-    currMillis = millis() + (255 - (currSpeed * 2));
+    currMillis = millis() + (100 - currSpeed) * 10;
   }
   
   hsv2rgb(float(h), 1, (float(currBrightness)/255.0), red, green, blue);
@@ -1459,4 +1374,17 @@ void waterFlag()
     }
     currMillis = millis() + 20 + ((125 - currSpeed) * 2);
   }
+}
+
+void christmasLights()
+{
+  for(int i = 0; i < maxPixels; i = i + 5)
+  {
+    strip.setPixelColor(i, strip.Color(currBrightness, 0, 0));
+    strip.setPixelColor(i+1, strip.Color(0, currBrightness, 0));
+    strip.setPixelColor(i+2, strip.Color(currBrightness, currBrightness / 2, 0));
+    strip.setPixelColor(i+3, strip.Color(0, 0, currBrightness));
+    strip.setPixelColor(i+4, strip.Color(currBrightness, 0, currBrightness / 2));
+  }
+
 }

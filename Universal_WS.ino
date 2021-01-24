@@ -248,6 +248,10 @@ void setup()
  	//Randomish x and y offset for simplex noise
  	yoffset = analogRead(A4) + analogRead (A5);
  	xoffset = analogRead(A5) + analogRead(A3);
+
+	//Seed color
+	h = random(1000) / 1000.0;
+    hOld = h;
 	
 	//Set the pins 
 	pinMode(PIN_POWER_A, OUTPUT);
@@ -304,6 +308,8 @@ void setup()
 	//Set program to value from memory (a new board has 0 in EEPROM for each slot)
 	encoderPos = lastSavedEncoderPosition;
 	oldEncPos = lastSavedEncoderPosition;
+
+	//Read the inputs once for prep
 	readInputs();
 }
 
@@ -402,23 +408,26 @@ void callColorFunction()
 			singleColor(0,currBrightness,currBrightness * (float(currSpeed) / 100));
 			break;
 		case 7:
-			//Blue > Teal
-			singleColor(0,currBrightness * (float(currSpeed) / 100),currBrightness);
+			//Blue > Purple
+			singleColor(currBrightness * (float( currSpeed) / 100),0,currBrightness);
 			break;
 		case 8:           
-			//Red > Purple
-			singleColor(currBrightness,0,currBrightness * (float(currSpeed) / 100));
+			//Purple > Red
+			singleColor(currBrightness,0,currBrightness * (float(100 - currSpeed) / 100));
 			break;
 		case 9:
-			//Blue > Purple
-			singleColor(currBrightness * (float(currSpeed) / 100),0,currBrightness);
+			//Teal > Blue
+			singleColor(0,currBrightness * (float(100 - currSpeed) / 100),currBrightness);
 			break;
 		case 10:
-			RainbowFlowFull();
+			//Yellow > Green
+			singleColor(currBrightness * (float(100 - currSpeed) / 100),currBrightness,0);
+			//RainbowFlowFull();
 			//rainbowFlag();
 			break;
 		case 11:
-			SparkleBlueGreen();
+			christmasLights();
+			//SparkleBlueGreen();
 			break;
 		case 12:
 			PurpleGoldSparkle();
