@@ -134,8 +134,9 @@ Future Improvements:
 #define UPSAMPLE 		3  		//1 = No Upsampling, up to maximum of 4
 #define PIN_DATA 		6		//WS28XX data line
 
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(maxPixels + 15, PIN_DATA, NEO_RGB + NEO_KHZ800);
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(maxPixels + 5, PIN_DATA, NEO_RGB + NEO_KHZ800);
 
+byte ledTemp[(maxPixels / UPSAMPLE) + 3][3];
 
 /***************************************************************************************
  						>>>>>> END OF CONFIGURATION <<<<<<
@@ -161,6 +162,8 @@ int brightnessCount = 0;
 long speedTotal = 0;
 int speedCount = 0;
 int writeDelay = 0;
+byte interfade = 0;
+byte interfadeMax = 7;
 byte tempStepDirection = 0;
 
 int fadeDirection = 0; // 1 or 0, positive or negative
@@ -239,7 +242,7 @@ void setup()
   /***************************************************************************************
     General Setup
   ***************************************************************************************/
- 	//Serial.begin(115200);
+ 	Serial.begin(115200);
 
 	//Randomize the Simplex Noise values for lava lamp style patterns
 	//Create a random seed by reading nearby electric noise on the analog ports
@@ -353,8 +356,38 @@ void loop()
 				encoderPos = upperLimit;
 			}
 
+			//Start new interfade
+			interfade = interfadeMax;
+
+			//Copy current LED values to temp for fading
+			for (int i = 0; i < (maxPixels / UPSAMPLE); i++)
+			{				
+				//Take every UPSAMPLE light info for fading
+				// 	ledTemp[i][0] = (strip.getPixelColor(i * UPSAMPLE) >> 16 & 0xff);
+				// 	ledTemp[i][1] = ((strip.getPixelColor(i * UPSAMPLE) >> 8) & 0xff);
+				// 	ledTemp[i][2] = (strip.getPixelColor(i * UPSAMPLE) & 0xff);
+
+				red = 0;
+				green = 0;
+				blue = 0;
+
+				//Calculate average value of lights for each UPSAMPLE range
+				for (int u = 0; u < UPSAMPLE; u++)
+				{
+					red += (strip.getPixelColor(u + i * UPSAMPLE) >> 16 & 0xff);
+					green += ((strip.getPixelColor(u + i * UPSAMPLE) >> 8) & 0xff);
+					blue += (strip.getPixelColor(u + i * UPSAMPLE) & 0xff);
+
+				}
+
+				//Store the values, averaged if UPSAMPLEd
+				ledTemp[i][0] = red / UPSAMPLE;
+				ledTemp[i][1] = green / UPSAMPLE;
+				ledTemp[i][2] = blue / UPSAMPLE;
+			}
+
 			//Start countdown to store encoder setting to EEPROM
-			writeDelay = 200;
+			writeDelay = 1000;
 			
 			//Update the oldEncPos value to current
 			oldEncPos = encoderPos;
@@ -362,6 +395,18 @@ void loop()
 
 		// display appropriate pattern
 		callColorFunction();
+
+		if (interfade != 0)
+		{
+			smoothFade(interfade * (255 / interfadeMax));
+			//Serial.print("INTERFADE ");
+			//Serial.println(interfade);
+		}
+		
+		if (interfade > 0)
+		{
+			interfade --;
+		}
 
 		//delay(10);
 		
@@ -422,6 +467,7 @@ void callColorFunction()
 		case 10:
 			//Yellow > Green
 			singleColor(currBrightness * (float(100 - currSpeed) / 100),currBrightness,0);
+			effectFunction();
 			//RainbowFlowFull();
 			//rainbowFlag();
 			break;

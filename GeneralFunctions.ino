@@ -51,6 +51,18 @@ void smoothOperator(){
   }
 }
 
+void smoothFade(byte fade)
+{
+  for (int i = 0; i < maxPixels; i++)
+  {				
+    red = (float(ledTemp[i / UPSAMPLE][0] / 255.0) * fade) + ((float(strip.getPixelColor(i) >> 16 & 0xff) / 255.0) * (255 - fade));
+    green = (float(ledTemp[i / UPSAMPLE][1] / 255.0) * fade) + ((float(strip.getPixelColor(i) >> 8 & 0xff) / 255.0) * (255 - fade));
+    blue = (float(ledTemp[i / UPSAMPLE][2] / 255.0) * fade) + ((float(strip.getPixelColor(i) & 0xff) / 255.0) * (255 - fade));
+
+    strip.setPixelColor(i, red, green, blue);
+  }  
+}
+
 int fastfloor(float n) {
   return n > 0 ? (int) n : (int) n - 1;
 }
@@ -245,7 +257,7 @@ void effectFunction()
 		}
 
     if (effectMillis < millis()){
-      effectMillis = millis() + 20 + ((255 - currSpeed) * 2);
+      effectMillis = millis() + ((120 - currSpeed) * 10);
       //delay(255 - currSpeed);
       //incremement currFadeStep to prepare for next frame & catch any rollover
       currFadeStep += 1;
