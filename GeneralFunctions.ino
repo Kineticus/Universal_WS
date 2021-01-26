@@ -54,13 +54,39 @@ void smoothOperator(){
 void smoothFade(byte fade)
 {
   for (int i = 0; i < maxPixels; i++)
-  {				
+  {
     red = (float(ledTemp[i / UPSAMPLE][0] / 255.0) * fade) + ((float(strip.getPixelColor(i) >> 16 & 0xff) / 255.0) * (255 - fade));
     green = (float(ledTemp[i / UPSAMPLE][1] / 255.0) * fade) + ((float(strip.getPixelColor(i) >> 8 & 0xff) / 255.0) * (255 - fade));
     blue = (float(ledTemp[i / UPSAMPLE][2] / 255.0) * fade) + ((float(strip.getPixelColor(i) & 0xff) / 255.0) * (255 - fade));
 
     strip.setPixelColor(i, red, green, blue);
   }  
+}
+
+void smoothFadeBegin()
+{
+  interfade = interfadeMax;
+
+  //Copy current LED values to temp for fading
+  for (int i = 0; i < (maxPixels / UPSAMPLE); i++)
+  {	
+    red = 0;
+    green = 0;
+    blue = 0;
+
+    //Add values of lights for each UPSAMPLE range
+    for (int u = 0; u < UPSAMPLE; u++)
+    {
+      red += (strip.getPixelColor(u + i * UPSAMPLE) >> 16 & 0xff);
+      green += ((strip.getPixelColor(u + i * UPSAMPLE) >> 8) & 0xff);
+      blue += (strip.getPixelColor(u + i * UPSAMPLE) & 0xff);
+    }
+
+    //Store the values, averaged if UPSAMPLEd
+    ledTemp[i][0] = red / UPSAMPLE;
+    ledTemp[i][1] = green / UPSAMPLE;
+    ledTemp[i][2] = blue / UPSAMPLE;
+  }
 }
 
 int fastfloor(float n) {
@@ -297,7 +323,7 @@ void readInputs(){
   
   // if encoder button is pressed, set encoder position = 1 (1st pattern)
   if (encoderButton == 0){
-    encoderPos = 1;
+    encoderPos = 2;
   }
 }
 

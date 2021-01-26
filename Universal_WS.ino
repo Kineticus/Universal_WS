@@ -11,6 +11,10 @@ Description: Controls a WS281X based strands of LEDs. Accepts input from a Rotar
     
 Change log: 
 
+Version 2.0	- Brian	- Added interfade / smoothOperator from Gemina with scaling
+	1/24/2021			Dynamic color with 2nd knob and better pattern organization
+						Metal Trapezoid Baseline
+
 Version 1.9 - Brian - Reduced number of total functions, simplified structure, small fixes
 	1/23/2021			This was sent to Bryson and Lauren
 
@@ -18,7 +22,6 @@ Version 1.8 - Brian - Added more patterns and "AmberSmatter" options to color fl
 	12/16/2020			This will be sent to James and Susan
 						
 Version 1.7 - Brian - Added robust speed knob support
-
 
 Version 1.6
 	1/19/20 - Brian - Fixed glitching on Simplex Noise patterns (maybe)
@@ -107,6 +110,7 @@ Future Improvements:
 #define INVERT_SPEED 	0		//Speed direction
 #define PIN_POWER_B		A3		//AUX 5v
 #define PIN_GROUND_B	A4		//AUX Ground
+
 #define SENSITIVITY		5
 #define BRIGHT_FLOOR	0
 
@@ -130,13 +134,14 @@ Future Improvements:
 
 ***************************************************************************************/
 
-#define maxPixels 		150		//Number of Pixels (add 1 extra for each level of upscaling)
-#define UPSAMPLE 		3  		//1 = No Upsampling, up to maximum of 4
+#define maxPixels 		100		//Number of Pixels (add 1 extra for each level of upscaling)
+#define UPSAMPLE 		2  		//1 is No upsampling, up to maximum of 3
+#define interfadeMax	8		//Fade time between patterns in frames
 #define PIN_DATA 		6		//WS28XX data line
 
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(maxPixels + 5, PIN_DATA, NEO_RGB + NEO_KHZ800);
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(maxPixels, PIN_DATA, NEO_RGB + NEO_KHZ800);
 
-byte ledTemp[(maxPixels / UPSAMPLE) + 5][3];
+byte ledTemp[(maxPixels / UPSAMPLE)][3];
 
 /***************************************************************************************
  						>>>>>> END OF CONFIGURATION <<<<<<
@@ -163,7 +168,6 @@ long speedTotal = 0;
 int speedCount = 0;
 int writeDelay = 0;
 byte interfade = 0;
-byte interfadeMax = 7;
 byte tempStepDirection = 0;
 
 int fadeDirection = 0; // 1 or 0, positive or negative
@@ -314,6 +318,9 @@ void setup()
 
 	//Read the inputs once for prep
 	readInputs();
+
+	//Begin interfade for smooth fade in
+	smoothFadeBegin();
 }
 
 /***************************************************************************************
@@ -357,37 +364,10 @@ void loop()
 			}
 
 			//Start new interfade
-			interfade = interfadeMax;
-
-			//Copy current LED values to temp for fading
-			for (int i = 0; i < (maxPixels / UPSAMPLE); i++)
-			{				
-				//Take every UPSAMPLE light info for fading
-				// 	ledTemp[i][0] = (strip.getPixelColor(i * UPSAMPLE) >> 16 & 0xff);
-				// 	ledTemp[i][1] = ((strip.getPixelColor(i * UPSAMPLE) >> 8) & 0xff);
-				// 	ledTemp[i][2] = (strip.getPixelColor(i * UPSAMPLE) & 0xff);
-
-				red = 0;
-				green = 0;
-				blue = 0;
-
-				//Calculate average value of lights for each UPSAMPLE range
-				for (int u = 0; u < UPSAMPLE; u++)
-				{
-					red += (strip.getPixelColor(u + i * UPSAMPLE) >> 16 & 0xff);
-					green += ((strip.getPixelColor(u + i * UPSAMPLE) >> 8) & 0xff);
-					blue += (strip.getPixelColor(u + i * UPSAMPLE) & 0xff);
-
-				}
-
-				//Store the values, averaged if UPSAMPLEd
-				ledTemp[i][0] = red / UPSAMPLE;
-				ledTemp[i][1] = green / UPSAMPLE;
-				ledTemp[i][2] = blue / UPSAMPLE;
-			}
-
+			smoothFadeBegin();
+			
 			//Start countdown to store encoder setting to EEPROM
-			writeDelay = 1000;
+			writeDelay = 252;
 			
 			//Update the oldEncPos value to current
 			oldEncPos = encoderPos;
@@ -398,17 +378,14 @@ void loop()
 
 		if (interfade != 0)
 		{
+			//smoothFade accepts 0 to 255, 255 is full snapshot, 0 is full current
 			smoothFade(interfade * (255 / interfadeMax));
-			//Serial.print("INTERFADE ");
-			//Serial.println(interfade);
 		}
 
 		if (interfade > 0)
 		{
 			interfade --;
 		}
-
-		//delay(10);
 		
 		//Transmit one frame of data out
 		strip.show();
@@ -467,45 +444,55 @@ void callColorFunction()
 		case 10:
 			//Yellow > Green
 			singleColor(currBrightness * (float(100 - currSpeed) / 100),currBrightness,0);
-			effectFunction();
-			//RainbowFlowFull();
 			//rainbowFlag();
 			break;
 		case 11:
 			christmasLights();
+			effectFunction();
 			//SparkleBlueGreen();
 			break;
 		case 12:
-			PurpleGoldSparkle();
+			RainbowFlowFull();
+			//PurpleGoldSparkle();
 			break;
 		case 13://Two Colors=
+			//Purple and gold
 			SteadyAlternatingColors(currBrightness,0,currBrightness/1.5, currBrightness, currBrightness/3, 0, (currSpeed + 1) / 6);
 			break;
 		case 14:
+			//White and Amber
 			SteadyAlternatingColors(currBrightness/2,currBrightness/2,currBrightness/3, currBrightness, currBrightness/4, 0, (currSpeed + 1) / 6);
 			break;
 		case 15:
+			//Green and Red
 			SteadyAlternatingColors(0,currBrightness,0, currBrightness, 0, 0, (currSpeed + 1) / 6);
 			break;
 		case 16:
+			//Pink and Blue
 			SteadyAlternatingColors(currBrightness,0,currBrightness/2, 0, 0, currBrightness, (currSpeed + 1) / 6);
 			break;
 		case 17:
+			//Blue and White
 			SteadyAlternatingColors(0,0,currBrightness, currBrightness/3,currBrightness/3,currBrightness/3, (currSpeed + 1) / 6);
 			break;
 		case 18:
+			//Blue and Green
 			SteadyAlternatingColors(0,0,currBrightness, 0, currBrightness, 0, (currSpeed + 1) / 6);
 			break;
 		case 19:
+			//Blue and Amber
 			SteadyAlternatingColors(0,0,currBrightness, currBrightness, currBrightness/5, 0, (currSpeed + 1) / 6);
 			break;
 		case 20://Rainbow Flow Colors
+			//Whole strip go through single HSV colors
 			RainbowHsvFast();
 			break;
 		case 21:
+			//HSV rainbow flow down strip
 			RainbowFlow();
 			break;
 		case 22:   
+			//
 			DualColorFlow();
 			break;
 		case 23:   
