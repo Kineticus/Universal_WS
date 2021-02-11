@@ -28,47 +28,16 @@ void AmberSmatter(int Spacing){
   1) spaceinc = space between colors, increment to have a greater gap
   2) timeinc = time between each color, increment for faster color transitions
 ***************************************************************************************/
-void RainbowOneYoffset(){
-  spaceinc = 0.03;
-  timeinc = (0.000025 * (currSpeed * 2));
+void RainbowYoffset(float spaceIncrement){
+  timeinc = (0.00005 * currSpeed);
   yoffset += timeinc; 
   //xoffset += timeinc;
-  SimplexNoisePatternInterpolated(spaceinc, timeinc, yoffset, xoffset);    
+  SimplexNoisePatternInterpolated(spaceIncrement, timeinc, yoffset, xoffset);    
 }
-void RainbowTwoYoffset(){
-  spaceinc = 0.07;
-  timeinc = (0.000025 * (currSpeed * 2));
-  yoffset += timeinc; ; 
-  //xoffset += timeinc;
-  SimplexNoisePatternInterpolated(spaceinc, timeinc, yoffset, xoffset);    
-}
-void RainbowThreeXoffset(){
-  spaceinc = 0.07;
-  timeinc = (0.000025 * (currSpeed * 2));
-  //yoffset += timeinc; 
+void RainbowXoffset(float spaceIncrement){
+  timeinc = (0.00005 * currSpeed);
   xoffset += timeinc;
-  SimplexNoisePatternInterpolated(spaceinc, timeinc, yoffset, xoffset);    
-}
-void RainbowFourXoffset(){
-  spaceinc = 0.03;
-  timeinc = (0.000025 * (currSpeed * 2));
-  //yoffset += timeinc; 
-  xoffset += timeinc;
-  SimplexNoisePatternInterpolated(spaceinc, timeinc, yoffset, xoffset);    
-}
-void RainbowBigXoffset(){
-  spaceinc = 0.12;
-  timeinc = (0.000025 * (currSpeed * 2));
-  //yoffset += timeinc; 
-  xoffset += timeinc;
-  SimplexNoisePatternInterpolated(spaceinc, timeinc, yoffset, xoffset);    
-}
-void RainbowBigYoffset(){
-  spaceinc = 0.12;
-  timeinc = (0.000025 * (currSpeed * 2));
-  yoffset += timeinc; ; 
-  //xoffset += timeinc;
-  SimplexNoisePatternInterpolated(spaceinc, timeinc, yoffset, xoffset);    
+  SimplexNoisePatternInterpolated(spaceIncrement, timeinc, yoffset, xoffset);    
 }
 void RainbowMovingPiece(){
   if (currMillis < millis())
@@ -207,7 +176,7 @@ void GreenBlue(){
 /***************************************************************************************
   Rainbow Flow Colors
 ***************************************************************************************/
-void RainbowFlow(){
+void RainbowFlow(float spaceBetween){
 	h = h - (currSpeed * .0001);
 	if (h > 1){
 		h -= 1;
@@ -223,7 +192,7 @@ void RainbowFlow(){
       strip.setPixelColor(i, strip.Color(red,green,blue));
 
     //slowly increment 'h' by small increments to make color flow
-    hTemp += .01; //decrease to space out the colors
+    hTemp += spaceBetween; //decrease to space out the colors
 
     if (hTemp > 1){
       hTemp -= 1;
@@ -235,33 +204,6 @@ void RainbowFlow(){
 	
 }
 
-void RainbowFlowFull(){
-	h = h - (currSpeed * .0001);
-	if (h > 1){
-		h -= 1;
-	}
-	if (h < 0){
-		h += 1;
-	}
-
-	float hTemp = h;
-  
-    for(uint16_t i=0; i<strip.numPixels(); i++) {
-      hsv2rgb(float(hTemp), 1, (float(currBrightness)/255.0), red, green, blue);
-      strip.setPixelColor(i, strip.Color(red,green,blue));
-
-    //slowly increment 'h' by small increments to make color flow
-    hTemp += .00667; //decrease to space out the colors
-
-    if (hTemp > 1){
-      hTemp -= 1;
-    }
-    if (hTemp < 0){
-      hTemp += 1;
-    }
-  }
-	
-}
 void DualColorFlow(){
     h = h + (currSpeed * .00001);//increment to make faster
     if (h > 1){
@@ -336,23 +278,7 @@ void DualColorFlowFat(){
      
 }
 
-void RainbowHsvSlow(){
-  h = h + (currSpeed * .00001); //increment to make faster
-  
-  if (h > 1){
-    h -= 1;
-  }
-  
-  if (h < 0){
-    h += 1;
-  }
-  for(uint16_t i=0; i<strip.numPixels(); i++) {
-    hsv2rgb(float(h), 1, (float(currBrightness)/255.0), red, green, blue);
-    strip.setPixelColor(i, strip.Color(red,green,blue));// Red 
-  }
-  
-}
-void RainbowHsvFast(){
+void RainbowHsv(){
   h = h + (currSpeed * .00001); //increment to make faster
   
   if (h > 1){
@@ -990,7 +916,7 @@ void DualColorFlowFast()
     }
 }
 
-void DualColorFlowFast2()
+void DualColorFlowFat2()
 {
     float hHigh = .15;
     float hLow = .05;
@@ -1052,7 +978,7 @@ void DualColorFlowFast2()
     }
 }
 
-void DualColorFlowFast3()
+void DualColorFlowFat3()
 {
     float hHigh = .15;
     float hLow = .05;
@@ -1208,7 +1134,7 @@ void waterFlow()
 {
   if (currMillis < millis())
   {
-    if (currSpeed > 2){
+    if (currSpeed >= 0){
       currStep += 1;
       if (currStep > 11){
         currStep = 0;

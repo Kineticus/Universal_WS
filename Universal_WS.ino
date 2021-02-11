@@ -12,8 +12,8 @@ Description: Controls a WS281X based strands of LEDs. Accepts input from a Rotar
 Change log: 
 
 Version 2.0	- Brian	- Added interfade / smoothOperator from Gemina with scaling
-	1/24/2021			Dynamic color with 2nd knob and better pattern organization
-						Metal Trapezoid Baseline
+	2/10/2021			Dynamic color with 2nd knob and better pattern organization
+						Metal Baseline
 
 Version 1.9 - Brian - Reduced number of total functions, simplified structure, small fixes
 	1/23/2021			This was sent to Bryson and Lauren
@@ -112,7 +112,7 @@ Future Improvements:
 #define PIN_GROUND_B	A4		//AUX Ground
 
 #define SENSITIVITY		5
-#define BRIGHT_FLOOR	0
+#define BRIGHT_FLOOR	2
 
 /***************************************************************************************
   !!!! >>>>> LOOK HERE <<<<<< !!!! ----- P I X E L   W I R I N G    S E T U P
@@ -184,7 +184,7 @@ int brightnessRead = 0;
   Encoder Variables
 ***************************************************************************************/
 
-byte upperLimit = 62; // max number of patterns (encoder)
+byte upperLimit = 54; // max number of patterns (encoder)
 int lowerLimit = 1; // minimum number of patterns (encoder)
 int encoderButton = 49;
 byte lastSavedEncoderPosition = 0;
@@ -246,7 +246,7 @@ void setup()
   /***************************************************************************************
     General Setup
   ***************************************************************************************/
- 	Serial.begin(115200);
+ 	//Serial.begin(115200);
 
 	//Randomize the Simplex Noise values for lava lamp style patterns
 	//Create a random seed by reading nearby electric noise on the analog ports
@@ -400,7 +400,7 @@ void callColorFunction()
 		//Single Colors
 		case 0:
 			//Red > Amber
-			singleColor(currBrightness,currBrightness * (float(currSpeed) / 350),0);
+			singleColor(currBrightness,currBrightness * (float(currSpeed) / 420),0);
 			break;
 		case 1:  
 			//Amber > Warm White
@@ -418,7 +418,7 @@ void callColorFunction()
 			break;
 		case 4:
 			//Day Light > Cool Light
-			singleColor(currBrightness - (currSpeed / 5), (currBrightness/2) + (currBrightness * (float(currSpeed) / 300)), (currBrightness/4) + (currBrightness * (float(currSpeed) / 175)));
+			singleColor(abs((currSpeed / 5) - currBrightness), (currBrightness/2) + (currBrightness * (float(currSpeed) / 300)), (currBrightness/4) + (currBrightness * (float(currSpeed) / 175)));
 			//singleColor(currBrightness, currBrightness/3,currBrightness/10);
 			break;
 		case 5:
@@ -426,43 +426,43 @@ void callColorFunction()
 			singleColor(currBrightness,currBrightness * (float(currSpeed) / 100),0);
 			break;
 		case 6:
+			//Yellow > Green
+			singleColor(currBrightness * (float(100 - currSpeed) / 100),currBrightness,0);
+			break;
+		case 7:
 			//Green > Teal
 			singleColor(0,currBrightness,currBrightness * (float(currSpeed) / 100));
 			break;
-		case 7:
+		case 8:   
+			//Teal > Blue
+			singleColor(0,currBrightness * (float(100 - currSpeed) / 100),currBrightness);        
+			break;
+		case 9:
 			//Blue > Purple
 			singleColor(currBrightness * (float( currSpeed) / 100),0,currBrightness);
 			break;
-		case 8:           
+		case 10:
 			//Purple > Red
 			singleColor(currBrightness,0,currBrightness * (float(100 - currSpeed) / 100));
-			break;
-		case 9:
-			//Teal > Blue
-			singleColor(0,currBrightness * (float(100 - currSpeed) / 100),currBrightness);
-			break;
-		case 10:
-			//Yellow > Green
-			singleColor(currBrightness * (float(100 - currSpeed) / 100),currBrightness,0);
 			//rainbowFlag();
 			break;
+		// --- Two Colors ---
 		case 11:
-			christmasLights();
-			effectFunction();
+			//Blue and Amber
+			SteadyAlternatingColors(0,0,currBrightness, currBrightness, currBrightness/5, 0, (currSpeed + 1) / 6);
 			//SparkleBlueGreen();
 			break;
 		case 12:
-			RainbowFlowFull();
-			//PurpleGoldSparkle();
-			break;
-		case 13://Two Colors=
+			//Blue and Green
+			SteadyAlternatingColors(0,0,currBrightness, 0, currBrightness, 0, (currSpeed + 1) / 6);break;
+		case 13:
 			//Purple and gold
 			SteadyAlternatingColors(currBrightness,0,currBrightness/1.5, currBrightness, currBrightness/3, 0, (currSpeed + 1) / 6);
 			break;
 		case 14:
 			//White and Amber
 			SteadyAlternatingColors(currBrightness/2,currBrightness/2,currBrightness/3, currBrightness, currBrightness/4, 0, (currSpeed + 1) / 6);
-			break;
+		break;
 		case 15:
 			//Green and Red
 			SteadyAlternatingColors(0,currBrightness,0, currBrightness, 0, 0, (currSpeed + 1) / 6);
@@ -473,48 +473,49 @@ void callColorFunction()
 			break;
 		case 17:
 			//Blue and White
-			SteadyAlternatingColors(0,0,currBrightness, currBrightness/3,currBrightness/3,currBrightness/3, (currSpeed + 1) / 6);
+			SteadyAlternatingColors(0,0,currBrightness, currBrightness/2,currBrightness/2,currBrightness/2, (currSpeed + 1) / 6);
 			break;
+		// --- Rainbow Type Things ---
 		case 18:
-			//Blue and Green
-			SteadyAlternatingColors(0,0,currBrightness, 0, currBrightness, 0, (currSpeed + 1) / 6);
+			christmasLights();
+			effectFunction();
 			break;
 		case 19:
-			//Blue and Amber
-			SteadyAlternatingColors(0,0,currBrightness, currBrightness, currBrightness/5, 0, (currSpeed + 1) / 6);
+			//1/2 Rainbow
+			RainbowFlow(float(0.5 / maxPixels));
 			break;
-		case 20://Rainbow Flow Colors
-			//Whole strip go through single HSV colors
-			RainbowHsvFast();
+		case 20:
+			//Full Rainbow
+			RainbowFlow(float(1.0 / maxPixels));
 			break;
 		case 21:
-			//HSV rainbow flow down strip
-			RainbowFlow();
+			//Whole strip go through single HSV colors
+			RainbowHsv();
 			break;
 		case 22:   
-			//
 			DualColorFlow();
 			break;
 		case 23:   
 			DualColorFlowFat();
 			break;
 		case 24:
-			RainbowMovingPiece();
+			DualColorFlowFat2();
 			break;
 		case 25:
-			RainbowHsvSlow();
+			DualColorFlowFat3();
 			break;
 		case 26:
-			colorWipe();
+			triFlag();
 			break;
 		case 27:
-			DualColorFlowGreenFast();
+			colorWipe();
+			//DualColorFlowGreenFast();
 			break;
 		case 28:
-			DualColorFlowFast();
+			waterFlow();
 			break;
 		case 29:
-			sparkleRasta();
+			colorWipeBounce();
 			break;
 		case 30:
 			TwinkleRainbow();
@@ -526,104 +527,97 @@ void callColorFunction()
 			PurpleGreen();
 			break;
 		case 33:
-			GlowingAmberWhite();
+			sparkleRasta();
 			break;
 		case 34:
-			triFlag();
+			GlowingAmberWhite();
 			break;
 		case 35:
-			rastaFlag();
+			GlowingAmber();
 			break;
 		case 36:
-			RainbowHsvTight();
+			RainbowYoffset(.03);
 			break;
 		case 37:
-			DualColorFlowFast2();
+			RainbowYoffset(.03);
+			AmberSmatter(4);
 			break;
 		case 38:
-			DualColorFlowFast3();
+			RainbowYoffset(.03);
+			AmberSmatter(7);
 			break;
 		case 39:
-			colorWipeBounce();
+			RainbowXoffset(.03);
   			break;
 		case 40:
-			waterFlow();
+			RainbowXoffset(.03);
+			AmberSmatter(4);
 			break;
 		case 41:
-			waterFlag();
+			RainbowXoffset(.03);
+			AmberSmatter(7);
 			break;
 		case 42:
-			RainbowBigXoffset();
+			RainbowYoffset(.07);
 			break;
 		case 43:
-			RainbowBigXoffset();
+			RainbowYoffset(.07);
 			AmberSmatter(4);
 			break;
 		case 44:
-			RainbowBigXoffset(); 
-			AmberSmatter(6);
+			RainbowYoffset(.07); 
+			AmberSmatter(7);
 			break;
 		case 45:
-			RainbowBigXoffset();
-			AmberSmatter(10);
+			RainbowXoffset(.07); 
 			break;
 		case 46:
-			RainbowBigYoffset(); 
-			break;
-		case 47:
-			RainbowBigYoffset();	
-			AmberSmatter(3);
-			break;
-		case 48:
-			RainbowBigYoffset(); 
-			AmberSmatter(10);
-			break;
-		case 49:
-			RainbowTwoYoffset();
-			break;
-		case 50:
-			RainbowTwoYoffset();
-			AmberSmatter(5);
-			break;
-		case 51:
-			RainbowTwoYoffset();
-			AmberSmatter(7);
-			break;	
-		case 52:
-			RainbowFourXoffset();
-			break;
-		case 53:
-			RainbowFourXoffset();
-			AmberSmatter(2);
-			break;
-		case 54:
-			RainbowFourXoffset();
-			AmberSmatter(5);
-			break;	
-		case 55:
-			RainbowOneYoffset();
-			break;
-		case 56:
-			RainbowOneYoffset();
+			RainbowXoffset(.07); 
 			AmberSmatter(4);
 			break;
+		case 47:
+			RainbowXoffset(.07);	
+			AmberSmatter(7);
+			break;
+		case 48:
+			RainbowYoffset(.21);
+			break;
+		case 49:
+			RainbowYoffset(.21);
+			AmberSmatter(4);
+			break;
+		case 50:
+			RainbowYoffset(.21);
+			AmberSmatter(7);
+			break;
+		case 51:
+			RainbowXoffset(.21);
+			break;	
+		case 52:
+			RainbowXoffset(.21);
+			AmberSmatter(4);
+			break;
+		case 53:
+			RainbowXoffset(.21);
+			AmberSmatter(7);
+			break;
+		case 54:
+			break;	
+		case 55:
+			break;
+		case 56:
+			break;
 		case 57:
-			RainbowOneYoffset();
-			AmberSmatter(6);
 			break;	
 		case 58:
-			RainbowThreeXoffset();
+			
 			break;
 		case 59:
-			RainbowThreeXoffset();
-			AmberSmatter(3);
 			break;
 		case 60:
-			RainbowThreeXoffset();
-			AmberSmatter(6);
 			break;
 		case 61:
-			GlowingAmber();
+			
 			break;
 		case 62:
 			
