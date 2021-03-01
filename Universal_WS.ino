@@ -418,7 +418,7 @@ void callColorFunction()
 			break;
 		case 4:
 			//Day Light > Cool Light
-			singleColor(abs((currSpeed / 5) - currBrightness), (currBrightness/2) + (currBrightness * (float(currSpeed) / 300)), (currBrightness/4) + (currBrightness * (float(currSpeed) / 175)));
+			singleColor(currBrightness, (currBrightness/2) + (currBrightness * (float(currSpeed) / 300)), (currBrightness/4) + (currBrightness * (float(currSpeed) / 150)));
 			//singleColor(currBrightness, currBrightness/3,currBrightness/10);
 			break;
 		case 5:
