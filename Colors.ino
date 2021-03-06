@@ -741,7 +741,14 @@ void colorWipe(){
     {
       tempStep = 0;
       hTemp = h;
-      h = random(1000) / 1000.0;
+
+      //Gives us a new random value that is at least .1 away from current value
+      h = hTemp + 0.1 + (random(800) / 1000.0);
+
+      if (h > 1)
+      {
+        h = h - 1;
+      }
     }
     currMillis = millis() + (100 - currSpeed) * 10;
   }
@@ -761,35 +768,44 @@ void colorWipe(){
 void colorWipeBounce(){
   if (currMillis < millis())
   {
+    //Is the speed knob "on" ?
     if (currSpeed > 2){
+
+      //Advance step depending on current direction
       if (tempStepDirection == 1){
         tempStep -= 1;
       }
-      if (tempStepDirection == 0){
+      else if (tempStepDirection == 0){
         tempStep += 1;
       }
     }
 
+    //Did we hit the end?
     if (tempStep > maxPixels)
     {
-      tempStepDirection++;
-      if (tempStepDirection > 2){
-        tempStepDirection = 0;
-        h = random(1000) / 1000.0;
-        hOld = h;
+      tempStepDirection = 1;
+
+     //Gives us a new random value that is at least .1 away from current value
+      hOld = h + 0.1 + (random(800) / 1000.0);
+
+      if (hOld > 1)
+      {
+        hOld = hOld - 1;
       }
-      h = hOld;
     }
-    if (tempStep < 1)
+    //Or the beginning?
+    else if (tempStep < 1)
     {
-      tempStepDirection++;
-      if (tempStepDirection > 1){
-        tempStepDirection = 0;
-        h = random(1000) / 1000.0;
-        hOld = h;
+      tempStepDirection = 0;
+      h = hOld + 0.1 + (random(800) / 1000.0);
+
+      if (h > 1)
+      {
+        h = h - 1;
       }
-      h = hOld;
     }
+
+    //Set delay based on speed knob
     currMillis = millis() + (100 - currSpeed) * 10;
   }
   
@@ -799,7 +815,7 @@ void colorWipeBounce(){
     strip.setPixelColor(i, strip.Color(red,green,blue));
   }
     
-  hsv2rgb(float(hTemp), 1, (float(currBrightness)/255.0), red, green, blue);
+  hsv2rgb(float(hOld), 1, (float(currBrightness)/255.0), red, green, blue);
     
   for(uint16_t i=tempStep; i<maxPixels+1; i++) {
     strip.setPixelColor(i, strip.Color(red,green,blue));

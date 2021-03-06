@@ -246,7 +246,7 @@ void setup()
   /***************************************************************************************
     General Setup
   ***************************************************************************************/
- 	//Serial.begin(115200);
+ 	Serial.begin(115200);
 
 	//Randomize the Simplex Noise values for lava lamp style patterns
 	//Create a random seed by reading nearby electric noise on the analog ports
@@ -257,8 +257,8 @@ void setup()
  	xoffset = analogRead(A5) + analogRead(A3);
 
 	//Seed color
-	h = random(1000) / 1000.0;
-    hOld = h;
+	h = random(500) / 1000.0;
+    hOld = h + random(500) / 1000.0;
 	
 	//Set the pins 
 	pinMode(PIN_POWER_A, OUTPUT);
