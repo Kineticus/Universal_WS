@@ -430,6 +430,9 @@ void setMaxPixelsMenu()
 		strip.setPixelColor(i, strip.Color(0,0,0));
 	}
 
+  //Accent currently selected
+  strip.setPixelColor(maxPixels - 1, strip.Color(255,255,255));
+
   //Strip output is in main function
 }
 
