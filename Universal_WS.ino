@@ -11,6 +11,9 @@ Description: Controls a WS281X based strands of LEDs. Accepts input from a Rotar
     
 Change log: 
 
+Version 2.1 - Brian - Added dyanmic pixel upscaling and provisioning from 6 up to hardware max
+	3/6/2021
+
 Version 2.0	- Brian	- Added interfade / smoothOperator from Gemina with scaling
 	2/10/2021			Dynamic color with 2nd knob and better pattern organization
 						Metal Baseline
@@ -134,14 +137,14 @@ Future Improvements:
 
 ***************************************************************************************/
 
-#define maxPixels 		100		//Number of Pixels (add 1 extra for each level of upscaling)
-#define UPSAMPLE 		2  		//1 is No upsampling, up to maximum of 3
-#define interfadeMax	8		//Fade time between patterns in frames
-#define PIN_DATA 		6		//WS28XX data line
+#define HARDWARE_PIXELS		150		//Max supported # of Pixels
+#define HARDWARE_UPSAMPLE	3		//Max Upsampling !!should not be adjusted!! Will auto adjust down.
+#define interfadeMax		8		//Fade time between patterns in frames
+#define PIN_DATA 			6		//WS28XX data line
 
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(maxPixels, PIN_DATA, NEO_RGB + NEO_KHZ800);
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(HARDWARE_PIXELS, PIN_DATA, NEO_RGB + NEO_KHZ800);
 
-byte ledTemp[(maxPixels / UPSAMPLE)][3];
+byte ledTemp[(HARDWARE_PIXELS / 3)][3];	//Compressed frame buffer
 
 /***************************************************************************************
  						>>>>>> END OF CONFIGURATION <<<<<<
@@ -152,6 +155,10 @@ byte ledTemp[(maxPixels / UPSAMPLE)][3];
 /***************************************************************************************
   General Variables
 ***************************************************************************************/
+int maxPixels = HARDWARE_PIXELS;
+int UPSAMPLE = 3;
+int settingsTimer = 0;
+bool settingsMenu = 0;
 int currBrightness = 0;
 int tempValue = 0;
 int brightnessValue = 0;
@@ -184,7 +191,8 @@ int brightnessRead = 0;
   Encoder Variables
 ***************************************************************************************/
 
-byte upperLimit = 54; // max number of patterns (encoder)
+#define MAX_PATTERNS 54
+byte upperLimit = MAX_PATTERNS; // max number of patterns (encoder)
 int lowerLimit = 1; // minimum number of patterns (encoder)
 int encoderButton = 49;
 byte lastSavedEncoderPosition = 0;
@@ -203,15 +211,15 @@ volatile byte reading = 0; //somewhere to store the direct values we read from o
   Simplex Noise Variable Declaration
 ***********************************************************/
 //Define simplex noise node for each LED
-const int LEDs_in_strip = (maxPixels / UPSAMPLE)+3;
+int LEDs_in_strip = (HARDWARE_PIXELS / HARDWARE_UPSAMPLE);
 const int LEDs_for_simplex = 6;
 
 // Extra fake LED at the end, to avoid fencepost problem.
 // It is used by simplex node and interpolation code.
-float LED_array_red[LEDs_in_strip+1];
-float LED_array_green[LEDs_in_strip+1];
-float LED_array_blue[LEDs_in_strip+1];
-int node_spacing = LEDs_in_strip / LEDs_for_simplex;
+float LED_array_red[(HARDWARE_PIXELS / HARDWARE_UPSAMPLE)+1];
+float LED_array_green[(HARDWARE_PIXELS / HARDWARE_UPSAMPLE)+1];
+float LED_array_blue[(HARDWARE_PIXELS / HARDWARE_UPSAMPLE)+1];
+int node_spacing = (HARDWARE_PIXELS / HARDWARE_UPSAMPLE) / LEDs_for_simplex;
 
 // Math variables
 int i, j, k, A[] = {0, 0, 0};
@@ -246,7 +254,7 @@ void setup()
   /***************************************************************************************
     General Setup
   ***************************************************************************************/
- 	Serial.begin(115200);
+ 	//Serial.begin(115200);
 
 	//Randomize the Simplex Noise values for lava lamp style patterns
 	//Create a random seed by reading nearby electric noise on the analog ports
@@ -298,6 +306,10 @@ void setup()
  /***************************************************************************************
     Other Setup
   ***************************************************************************************/
+
+ 	//Read max pixels and upscaling from memory
+ 	readMaxPixels();
+
 	//Initialize up the LED strip
 	strip.begin();
 	
@@ -328,65 +340,72 @@ void setup()
 ***************************************************************************************/
 void loop()
 {
-
 	//Read potentiometer values
 	readInputs();
 
 	//Framerate Control
 	if (fpsMillis < millis())
-  	{
-		//1 second = 1000 millis. 1000 millis / 60 fps = 16 millis between frames
-		fpsMillis = millis() + 16;
-
-		//Check to see if we should write the current encoder value to EEPROM
-		if (writeDelay > 1)
+	{
+		//Check to see if we are in regular run mode
+		if (settingsMenu == false)
 		{
-			writeDelay --;
-		}
-		else if (writeDelay == 1)
-		{
-			EEPROM.write(1, encoderPos);
-			writeDelay = 0;
-		}
+			//1 second = 1000 millis. 1000 millis / 60 fps = 16 millis between frames
+			fpsMillis = millis() + 16;
 
-		//Calculate average potentiometer readings
-		smoothOperator();
-
-		//Check to see if Encoder value has changed
-		if (encoderPos != oldEncPos)
-		{
-			//Keep encoder knob within upper && lower limits
-			if (encoderPos > upperLimit){
-				encoderPos = lowerLimit;
+			//Check to see if we should write the current encoder value to EEPROM
+			if (writeDelay > 1)
+			{
+				writeDelay --;
 			}
-			if (encoderPos < lowerLimit) {
-				encoderPos = upperLimit;
+			else if (writeDelay == 1)
+			{
+				EEPROM.write(1, encoderPos);
+				writeDelay = 0;
 			}
 
-			//Start new interfade
-			smoothFadeBegin();
-			
-			//Start countdown to store encoder setting to EEPROM
-			writeDelay = 252;
-			
-			//Update the oldEncPos value to current
-			oldEncPos = encoderPos;
-		}
+			//Calculate average potentiometer readings
+			smoothOperator();
 
-		// display appropriate pattern
-		callColorFunction();
+			//Check to see if Encoder value has changed
+			if (encoderPos != oldEncPos)
+			{
+				//Keep encoder knob within upper && lower limits
+				if (encoderPos > upperLimit){
+					encoderPos = lowerLimit;
+				}
+				if (encoderPos < lowerLimit) {
+					encoderPos = upperLimit;
+				}
 
-		if (interfade != 0)
+				//Start new interfade
+				smoothFadeBegin();
+				
+				//Start countdown to store encoder setting to EEPROM
+				writeDelay = 120;
+				
+				//Update the oldEncPos value to current
+				oldEncPos = encoderPos;
+			}
+
+			// display appropriate pattern
+			callColorFunction();
+
+			if (interfade != 0)
+			{
+				//smoothFade accepts 0 to 255, 255 is full snapshot, 0 is full current
+				smoothFade(interfade * (255 / interfadeMax));
+			}
+
+			if (interfade > 0)
+			{
+				interfade --;
+			}
+		}		
+		else //We are in the settings menu
 		{
-			//smoothFade accepts 0 to 255, 255 is full snapshot, 0 is full current
-			smoothFade(interfade * (255 / interfadeMax));
+			setMaxPixelsMenu();
 		}
 
-		if (interfade > 0)
-		{
-			interfade --;
-		}
-		
 		//Transmit one frame of data out
 		strip.show();
 	}

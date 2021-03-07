@@ -8,7 +8,7 @@
 
 void singleColor(int redValue, int greenValue, int blueValue)
 {
-  for(uint16_t i=0; i<strip.numPixels(); i++) {
+  for(uint16_t i=0; i<maxPixels; i++) {
     strip.setPixelColor(i, strip.Color(redValue, greenValue, blueValue));
   }
 }
@@ -18,7 +18,7 @@ void singleColor(int redValue, int greenValue, int blueValue)
 ***************************************************************************************/
 
 void AmberSmatter(int Spacing){
-  for(uint16_t i=0; i<strip.numPixels(); i = i + Spacing) {
+  for(uint16_t i=0; i<maxPixels; i = i + Spacing) {
     strip.setPixelColor(i, strip.Color(currBrightness, currBrightness/8,0)); //Amber 
   }
 }
@@ -108,69 +108,24 @@ void SteadyAlternatingColors(byte r1, byte g1, byte b1, byte r2, byte g2, byte b
     Spacing = 1;
   }
   
-  for (int i = 0; i < strip.numPixels(); i = i + (Spacing * 2))
+  for (int i = 0; i < maxPixels; i = i + (Spacing * 2))
   {
     for (int ii = 0; ii <= Spacing; ii++)
     {
-      strip.setPixelColor(i + ii, strip.Color(r1, g1, b1));
+      if ((i + ii) < maxPixels)
+      {
+        strip.setPixelColor(i + ii, strip.Color(r1, g1, b1));
+      }
     }
 
     for (int ii = 0; ii <= Spacing; ii++)
     {
-      strip.setPixelColor((i + Spacing) + ii, strip.Color(r2, g2, b2));
+      if ((i + ii + Spacing) < maxPixels)
+      {
+        strip.setPixelColor((i + Spacing) + ii, strip.Color(r2, g2, b2));
+      }
     }
   }
-}
-
-void RedGreen(){
-  for(uint16_t i=0; i<strip.numPixels(); i++) {
-    if ((i % 2) == 0){
-      strip.setPixelColor(i, strip.Color(0,currBrightness,0));// Green
-    } else {
-      strip.setPixelColor(i, strip.Color(currBrightness,0,0));// Red
-    }
-  }     
-  effectFunction();
-}
-void PurpleBlue(){
-  for(uint16_t i=0; i<strip.numPixels(); i++) {
-    if ((i % 2) == 0){
-      strip.setPixelColor(i, strip.Color(0,0,currBrightness));// Blue
-    } else {
-      strip.setPixelColor(i, strip.Color(currBrightness,0,currBrightness/2));// Purple
-    }  
-  }  
-  effectFunction();
-}
-void BlueWhite(){
-  for(uint16_t i=0; i<strip.numPixels(); i++) {
-    if ((i % 2) == 0){
-      strip.setPixelColor(i, strip.Color(currBrightness/3,currBrightness/3,currBrightness/3));// White
-    } else {
-      strip.setPixelColor(i, strip.Color(0,0,currBrightness));// Blue
-    }
-  }
-  effectFunction();
-}
-void AmberWhite(){
-  for(uint16_t i=0; i<strip.numPixels(); i++) {
-    if ((i % 2) == 0){
-      strip.setPixelColor(i, strip.Color(currBrightness/2,currBrightness/2,currBrightness/2));// White
-    } else {
-      strip.setPixelColor(i, strip.Color(currBrightness, currBrightness/3,0)); //Amber
-    } 
-  }
-  effectFunction();
-}
-void GreenBlue(){
-  for(uint16_t i=0; i<strip.numPixels(); i++) {
-    if ((i % 2) == 0){
-      strip.setPixelColor(i, strip.Color(0,currBrightness,0));// Green
-    } else {
-      strip.setPixelColor(i, strip.Color(0,0,currBrightness)); //Blue
-    } 
-  }
-  effectFunction();   
 }
 
 /***************************************************************************************
@@ -187,7 +142,7 @@ void RainbowFlow(float spaceBetween){
 
 	float hTemp = h;
   
-    for(uint16_t i=0; i<strip.numPixels(); i++) {
+    for(uint16_t i=0; i<maxPixels; i++) {
       hsv2rgb(float(hTemp), 1, (float(currBrightness)/255.0), red, green, blue);
       strip.setPixelColor(i, strip.Color(red,green,blue));
 
@@ -228,14 +183,20 @@ void DualColorFlow(){
 
     hsv2rgb(float(hTemp), 1, (float(currBrightness)/255.0), red2, green2, blue2);
   
-     for(uint16_t i=0; i<strip.numPixels(); i=i+8) {
+     for(uint16_t i=0; i<maxPixels; i=i+8) {
       for(uint16_t ii=i; ii<(i+4); ii++)
       {
-        strip.setPixelColor(ii, strip.Color(red,green,blue));
+        if (ii < maxPixels)
+        {
+          strip.setPixelColor(ii, strip.Color(red,green,blue));
+        }
       }
       for(uint16_t ii=i+4; ii<(i+8); ii++)
       {
-        strip.setPixelColor(ii, strip.Color(red2,green2,blue2));   
+        if (ii < maxPixels)
+        {
+          strip.setPixelColor(ii, strip.Color(red2,green2,blue2));  
+        }
       }
     }
      
@@ -265,14 +226,20 @@ void DualColorFlowFat(){
 
     hsv2rgb(float(hTemp), 1, (float(currBrightness)/255.0), red2, green2, blue2);
   
-    for(uint16_t i=0; i<strip.numPixels(); i=i+16) {
+    for(uint16_t i=0; i<maxPixels; i=i+16) {
       for(uint16_t ii=i; ii<(i+8); ii++)
       {
-        strip.setPixelColor(ii, strip.Color(red,green,blue));
+        if (ii < maxPixels)
+        {
+          strip.setPixelColor(ii, strip.Color(red,green,blue));
+        }
       }
       for(uint16_t ii=i+8; ii<(i+16); ii++)
       {
-        strip.setPixelColor(ii, strip.Color(red2,green2,blue2));   
+        if (ii < maxPixels)
+        {
+          strip.setPixelColor(ii, strip.Color(red2,green2,blue2));   
+        }
       }
     }
      
@@ -290,7 +257,7 @@ void RainbowHsv(){
   }
   hsv2rgb(float(h), 1, (float(currBrightness)/255.0), red, green, blue);
   
-  for(uint16_t i=0; i<strip.numPixels(); i++) {
+  for(uint16_t i=0; i<maxPixels; i++) {
     strip.setPixelColor(i, strip.Color(red,green,blue));// Red 
   }
    
@@ -308,7 +275,7 @@ void RainbowHsvTight(){
   }
   float hTemp = h;
   
-  for(uint16_t i=0; i<strip.numPixels(); i++) {
+  for(uint16_t i=0; i<maxPixels; i++) {
     hsv2rgb(float(hTemp), 1, (float(currBrightness)/255.0), red, green, blue);
     strip.setPixelColor(i, strip.Color(red,green,blue));
 
@@ -781,7 +748,7 @@ void colorWipeBounce(){
     }
 
     //Did we hit the end?
-    if (tempStep > maxPixels)
+    if (tempStep >= maxPixels)
     {
       tempStepDirection = 1;
 
@@ -817,7 +784,7 @@ void colorWipeBounce(){
     
   hsv2rgb(float(hOld), 1, (float(currBrightness)/255.0), red, green, blue);
     
-  for(uint16_t i=tempStep; i<maxPixels+1; i++) {
+  for(uint16_t i=tempStep; i<maxPixels; i++) {
     strip.setPixelColor(i, strip.Color(red,green,blue));
   }
 }
@@ -857,14 +824,20 @@ void DualColorFlowGreenFast()
 
     hsv2rgb(float(hTemp), 1, (float(currBrightness) / 255.0), red2, green2, blue2);
 
-     for(uint16_t i=0; i<strip.numPixels(); i=i+8) {
+     for(uint16_t i=0; i<maxPixels; i=i+8) {
       for(uint16_t ii=i; ii<(i+4); ii++)
       {
-        strip.setPixelColor(ii, strip.Color(red,green,blue));
+        if (ii < maxPixels)
+        {
+          strip.setPixelColor(ii, strip.Color(red,green,blue));
+        }
       }
       for(uint16_t ii=i+4; ii<(i+8); ii++)
       {
-        strip.setPixelColor(ii, strip.Color(red2,green2,blue2));   
+        if (ii < maxPixels)
+        {
+          strip.setPixelColor(ii, strip.Color(red2,green2,blue2));   
+        }
       }
     }
 
@@ -920,14 +893,20 @@ void DualColorFlowFast()
 
     hsv2rgb(float(hTemp), 1, (float(currBrightness) / 255.0), red2, green2, blue2);
 
-     for(uint16_t i=0; i<strip.numPixels(); i=i+16) {
+     for(uint16_t i=0; i<maxPixels; i=i+16) {
       for(uint16_t ii=i; ii<(i+8); ii++)
       {
-        strip.setPixelColor(ii, strip.Color(red,green,blue));
+        if (ii < maxPixels)
+        {
+          strip.setPixelColor(ii, strip.Color(red,green,blue));
+        }
       }
       for(uint16_t ii=i+8; ii<(i+16); ii++)
       {
-        strip.setPixelColor(ii, strip.Color(red2,green2,blue2));   
+        if (ii < maxPixels)
+        {
+          strip.setPixelColor(ii, strip.Color(red2,green2,blue2));   
+        }
       }
     }
 }
@@ -982,14 +961,20 @@ void DualColorFlowFat2()
 
     hsv2rgb(float(hTemp), 1, (float(currBrightness) / 255.0), red2, green2, blue2);
 
-     for(uint16_t i=0; i<strip.numPixels(); i=i+16) {
+     for(uint16_t i=0; i<maxPixels; i=i+16) {
       for(uint16_t ii=i; ii<(i+8); ii++)
       {
-        strip.setPixelColor(ii, strip.Color(red,green,blue));
+        if (ii < maxPixels)
+        {
+          strip.setPixelColor(ii, strip.Color(red,green,blue));
+        }
       }
       for(uint16_t ii=i+8; ii<(i+16); ii++)
       {
-        strip.setPixelColor(ii, strip.Color(red2,green2,blue2));   
+        if (ii < maxPixels)
+        {
+          strip.setPixelColor(ii, strip.Color(red2,green2,blue2));   
+        }
       }
     }
 }
@@ -1044,14 +1029,20 @@ void DualColorFlowFat3()
 
     hsv2rgb(float(hTemp), 1, (float(currBrightness) / 255.0), red2, green2, blue2);
 
-     for(uint16_t i=0; i<strip.numPixels(); i=i+16) {
+     for(uint16_t i=0; i<maxPixels; i=i+16) {
       for(uint16_t ii=i; ii<(i+8); ii++)
       {
-        strip.setPixelColor(ii, strip.Color(red,green,blue));
+        if (ii < maxPixels)
+        {
+          strip.setPixelColor(ii, strip.Color(red,green,blue));
+        }
       }
       for(uint16_t ii=i+8; ii<(i+16); ii++)
       {
-        strip.setPixelColor(ii, strip.Color(red2,green2,blue2));   
+        if (ii < maxPixels)
+        {
+          strip.setPixelColor(ii, strip.Color(red2,green2,blue2));   
+        }
       }
     }
 }
@@ -1155,7 +1146,7 @@ void waterFlow()
       if (currStep > 11){
         currStep = 0;
       }
-      for (int i = maxPixels; i > -1; i--){
+      for (int i = maxPixels - 2; i > -1; i--){
         red = (strip.getPixelColor(i) >> 16 & 0xff);
         green = ((strip.getPixelColor(i) >> 8) & 0xff);
         blue = (strip.getPixelColor(i) & 0xff);
@@ -1265,16 +1256,40 @@ void triFlag()
 
   hsv2rgb(float(hTemp), 1, (float(currBrightness)/255.0), red3, green3, blue3);
 
-  for(uint16_t i=0; i<strip.numPixels(); i+=9) {
+  for(uint16_t i=0; i<maxPixels; i+=9) {
     strip.setPixelColor(i, strip.Color(red,green,blue));
-    strip.setPixelColor(i+1, strip.Color(red,green,blue));
-    strip.setPixelColor(i+2, strip.Color(red,green,blue));
-    strip.setPixelColor(i+3, strip.Color(red3,green3,blue3));
-    strip.setPixelColor(i+4, strip.Color(red3,green3,blue3));
-    strip.setPixelColor(i+5, strip.Color(red3,green3,blue3));
-    strip.setPixelColor(i+6, strip.Color(red2,green2,blue2));
-    strip.setPixelColor(i+7, strip.Color(red2,green2,blue2));
-    strip.setPixelColor(i+8, strip.Color(red2,green2,blue2));
+    if (i + 1 < maxPixels)
+    {
+      strip.setPixelColor(i+1, strip.Color(red,green,blue));
+    }
+    if (i + 2 < maxPixels)
+    {
+      strip.setPixelColor(i+2, strip.Color(red,green,blue));
+    }
+    if (i + 3 < maxPixels)
+    {
+      strip.setPixelColor(i+3, strip.Color(red3,green3,blue3));
+    }
+    if (i + 4 < maxPixels)
+    {
+      strip.setPixelColor(i+4, strip.Color(red3,green3,blue3));
+    }
+    if (i + 5 < maxPixels)
+    {
+      strip.setPixelColor(i+5, strip.Color(red3,green3,blue3));
+    }
+    if (i + 6 < maxPixels)
+    {
+      strip.setPixelColor(i+6, strip.Color(red2,green2,blue2));
+    }
+    if (i + 7 < maxPixels)
+    {
+      strip.setPixelColor(i+7, strip.Color(red2,green2,blue2));
+    }
+    if (i + 8 < maxPixels)
+    {
+      strip.setPixelColor(i+8, strip.Color(red2,green2,blue2));
+    }
   }
 }
 
@@ -1322,11 +1337,26 @@ void christmasLights()
 {
   for(int i = 0; i < maxPixels; i = i + 5)
   {
-    strip.setPixelColor(i, strip.Color(currBrightness, 0, 0));
-    strip.setPixelColor(i+1, strip.Color(0, currBrightness, 0));
-    strip.setPixelColor(i+2, strip.Color(currBrightness, currBrightness / 2, 0));
-    strip.setPixelColor(i+3, strip.Color(0, 0, currBrightness));
-    strip.setPixelColor(i+4, strip.Color(currBrightness, 0, currBrightness / 2));
+    if (i < maxPixels)
+    {
+      strip.setPixelColor(i, strip.Color(currBrightness, 0, 0));
+    }
+    if (i+1 < maxPixels)
+    {
+      strip.setPixelColor(i+1, strip.Color(0, currBrightness, 0));
+    }
+    if (i+2 < maxPixels)
+    {
+      strip.setPixelColor(i+2, strip.Color(currBrightness, currBrightness / 2, 0));
+    }
+    if (i+3 < maxPixels)
+    {
+      strip.setPixelColor(i+3, strip.Color(0, 0, currBrightness));
+    }
+    if (i+4 < maxPixels)
+    {
+      strip.setPixelColor(i+4, strip.Color(currBrightness, 0, currBrightness / 2));
+    }
   }
 
 }

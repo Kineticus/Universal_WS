@@ -321,10 +321,146 @@ void readInputs(){
 
   encoderButton = digitalRead(4); // read digital pin 4
   
-  // if encoder button is pressed, set encoder position = 1 (1st pattern)
-  if (encoderButton == 0){
+  //Is encoder button being pressed?
+  if (encoderButton == 0)
+  {
+    //Set pattern back to warm white
     encoderPos = 2;
+
+    if (settingsMenu == 1)
+    {
+      //Disable menu
+      settingsMenu = 0;
+
+      //Back to actual number of patterns, not hardware pixel max
+      upperLimit = MAX_PATTERNS;
+
+      //Adjust simplex variables depending on new settings
+      LEDs_in_strip = maxPixels / UPSAMPLE;
+      node_spacing = LEDs_in_strip / LEDs_for_simplex;
+
+      //Write it to memory
+      EEPROM.write(2, maxPixels);
+      EEPROM.write(3, UPSAMPLE);
+    }
+
+    //Knob is held down, increase timer
+    settingsTimer ++;
+
+    //Has it been held down ~10 seconds?
+    if (settingsTimer > 32000)
+    {
+      //Enable max pixel menu
+      settingsMenu = 1;
+
+      //Encoder upper limit is now hardware max pixel limit 
+      upperLimit = HARDWARE_PIXELS;
+
+      //Place us based on current max pixel setting
+      encoderPos = maxPixels;
+
+      //Show Christmas lights to signify menu entry
+      christmasLights();
+      strip.show();
+
+      //Wait 2 seconds
+      delay(2000);
+    }
   }
+  else //button is not being held
+  {
+    //Is the timer pent up at all? If so, empty it.
+    if (settingsTimer > 0)
+    {
+      settingsTimer = 0;
+    }
+  }
+}
+
+
+/***************************************************************************************
+  Settings Menus
+***************************************************************************************/
+void setMaxPixelsMenu()
+{
+  //Set output to Red by default, and Upsample rate to 1x
+	red = 255;
+	green = 0;
+	blue = 0;
+	UPSAMPLE = 1;
+
+  //Make sure we don't go too low, some issues with simplex noise
+	if (encoderPos < 6)
+	{
+		encoderPos = 6;
+	}
+
+  //Set the system Max Pixels to the currently select amount
+	maxPixels = encoderPos;
+	
+  //Check to see if we need to start upscaling
+	if (encoderPos > (HARDWARE_PIXELS / HARDWARE_UPSAMPLE))
+	{
+    //We do, 2x
+		red = 0;
+		green = 255;
+		blue = 0;
+		UPSAMPLE = 2;
+	}
+
+  //See if even more upscaling is needed
+	if (encoderPos > (HARDWARE_PIXELS / HARDWARE_UPSAMPLE) * 2)
+	{
+    //it is, 3x 
+		red = 0;
+		green = 0;
+		blue = 255;
+		UPSAMPLE = 3;
+	}
+
+  //Draw the current amount of pixels
+	for(uint16_t i=0; i<maxPixels; i++)
+  {
+		strip.setPixelColor(i, strip.Color(red,green,blue));
+	}
+
+  //Clear off any that have been deselected
+	for(uint16_t i=maxPixels; i<HARDWARE_PIXELS; i++)
+  {
+		strip.setPixelColor(i, strip.Color(0,0,0));
+	}
+
+  //Strip output is in main function
+}
+
+void readMaxPixels()
+{
+  maxPixels = EEPROM.read(2);
+	UPSAMPLE = EEPROM.read(3);
+
+	if (maxPixels > HARDWARE_PIXELS)
+	{
+		maxPixels = HARDWARE_PIXELS;
+	}
+
+	if (UPSAMPLE > HARDWARE_UPSAMPLE)
+	{
+		UPSAMPLE = HARDWARE_UPSAMPLE;
+	}
+
+	if ((maxPixels / UPSAMPLE) > (HARDWARE_PIXELS / HARDWARE_UPSAMPLE))
+	{
+		maxPixels = 50;
+		UPSAMPLE = 1;
+	}
+
+	Serial.println(maxPixels);
+	Serial.println(UPSAMPLE);
+	
+	//Adjust simplex variables depending on settings
+	LEDs_in_strip = maxPixels / UPSAMPLE;
+	node_spacing = LEDs_in_strip / LEDs_for_simplex;
+
 }
 
 void PinA(){
