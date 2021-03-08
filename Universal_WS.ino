@@ -157,7 +157,7 @@ byte ledTemp[(HARDWARE_PIXELS / 3)][3];	//Compressed frame buffer
 ***************************************************************************************/
 int maxPixels = HARDWARE_PIXELS;
 int UPSAMPLE = 3;
-int settingsTimer = 0;
+unsigned long settingsTimer = 0;
 bool settingsMenu = 0;
 int currBrightness = 0;
 int tempValue = 0;
@@ -195,6 +195,7 @@ int brightnessRead = 0;
 byte upperLimit = MAX_PATTERNS; // max number of patterns (encoder)
 int lowerLimit = 1; // minimum number of patterns (encoder)
 int encoderButton = 49;
+byte favoritePattern = 2;
 byte lastSavedEncoderPosition = 0;
 int counter = 0;
 
@@ -211,14 +212,14 @@ volatile byte reading = 0; //somewhere to store the direct values we read from o
   Simplex Noise Variable Declaration
 ***********************************************************/
 //Define simplex noise node for each LED
-int LEDs_in_strip = (HARDWARE_PIXELS / HARDWARE_UPSAMPLE);
+int LEDs_in_strip = 0; //defined in adjustSimplex();
 const int LEDs_for_simplex = 6;
 
 // Extra fake LED at the end, to avoid fencepost problem.
 // It is used by simplex node and interpolation code.
-float LED_array_red[(HARDWARE_PIXELS / HARDWARE_UPSAMPLE)+1];
-float LED_array_green[(HARDWARE_PIXELS / HARDWARE_UPSAMPLE)+1];
-float LED_array_blue[(HARDWARE_PIXELS / HARDWARE_UPSAMPLE)+1];
+float LED_array_red[(HARDWARE_PIXELS / HARDWARE_UPSAMPLE)+HARDWARE_UPSAMPLE];
+float LED_array_green[(HARDWARE_PIXELS / HARDWARE_UPSAMPLE)+HARDWARE_UPSAMPLE];
+float LED_array_blue[(HARDWARE_PIXELS / HARDWARE_UPSAMPLE)+HARDWARE_UPSAMPLE];
 int node_spacing = (HARDWARE_PIXELS / HARDWARE_UPSAMPLE) / LEDs_for_simplex;
 
 // Math variables

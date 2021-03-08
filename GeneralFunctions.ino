@@ -324,9 +324,6 @@ void readInputs(){
   //Is encoder button being pressed?
   if (encoderButton == 0)
   {
-    //Set pattern back to warm white
-    encoderPos = 2;
-
     if (settingsMenu == 1)
     {
       //Disable menu
@@ -336,42 +333,100 @@ void readInputs(){
       upperLimit = MAX_PATTERNS;
 
       //Adjust simplex variables depending on new settings
-      LEDs_in_strip = maxPixels / UPSAMPLE;
-      node_spacing = LEDs_in_strip / LEDs_for_simplex;
+      adjustSimplex();
 
       //Write it to memory
       EEPROM.write(2, maxPixels);
       EEPROM.write(3, UPSAMPLE);
     }
 
-    //Knob is held down, increase timer
-    settingsTimer ++;
-
-    //Has it been held down ~10 seconds?
-    if (settingsTimer > 32000)
+    if (settingsTimer == 0)
     {
-      //Enable max pixel menu
-      settingsMenu = 1;
+      settingsTimer = millis();
+    }
+    //Has it been held down for ~4 seconds?
+    
+    if (settingsTimer != 0)
+    {
+      if (settingsTimer + 3000 < millis())
+      {
+        if (encoderPos != favoritePattern)
+        {
+          float tempHue = 0;
 
-      //Encoder upper limit is now hardware max pixel limit 
-      upperLimit = HARDWARE_PIXELS;
+          
+          for (int i = 0; i < maxPixels; i++)
+          {
+            tempHue = tempHue + (1.0 / maxPixels);
 
-      //Place us based on current max pixel setting
-      encoderPos = maxPixels;
+            if (tempHue > 1)
+            {
+              tempHue = tempHue - 1;
+            }
 
-      //Show Christmas lights to signify menu entry
-      christmasLights();
-      strip.show();
+            hsv2rgb(tempHue, 1, float(currBrightness / 255.0), red, green, blue);
+            strip.setPixelColor(i, strip.Color(red,green,blue));
+            strip.show();
 
-      //Wait 2 seconds
-      delay(2000);
+            delay(5);
+
+            //Let go off button?
+            if (digitalRead(4) == true)
+            {
+              i = maxPixels;
+            }
+          }
+
+          //Still holding button? Save it!
+          if (digitalRead(4) == false)
+          {
+            favoritePattern = encoderPos;
+            EEPROM.write(4, favoritePattern);
+
+            singleColor(currBrightness, currBrightness, currBrightness);
+            strip.show();
+            delay(50);
+            singleColor(0, 0, 0);
+            strip.show();
+            delay(500);
+            smoothFadeBegin();
+          }
+
+        }
+      }
+
+      //Has it been held down ~10 seconds?
+      if (settingsTimer + 10000 < millis())
+      {
+        //Enable max pixel menu
+        settingsMenu = 1;
+
+        //Reset timer
+        settingsTimer = 0;
+
+        //Encoder upper limit is now hardware max pixel limit 
+        upperLimit = HARDWARE_PIXELS;
+
+        //Place us based on current max pixel setting
+        encoderPos = maxPixels;
+
+        //Show Christmas lights to signify menu entry
+        christmasLights();
+        strip.show();
+
+        //Wait 2 seconds
+        delay(2000);
+      }
     }
   }
   else //button is not being held
   {
-    //Is the timer pent up at all? If so, empty it.
+    //Has the timer gone over 0? Change to favorite pattern
     if (settingsTimer > 0)
     {
+      //Set pattern back to user favorite
+      encoderPos = favoritePattern;
+      
       settingsTimer = 0;
     }
   }
@@ -440,6 +495,7 @@ void readMaxPixels()
 {
   maxPixels = EEPROM.read(2);
 	UPSAMPLE = EEPROM.read(3);
+  favoritePattern = EEPROM.read(4);
 
 	if (maxPixels > HARDWARE_PIXELS)
 	{
@@ -457,13 +513,23 @@ void readMaxPixels()
 		UPSAMPLE = 1;
 	}
 
-	Serial.println(maxPixels);
-	Serial.println(UPSAMPLE);
+  if (favoritePattern > MAX_PATTERNS)
+  {
+    favoritePattern = 2; //Warm White by default
+  }
+
+	//Serial.println(maxPixels);
+	//Serial.println(UPSAMPLE);
+  //Serial.println(favoritePattern);
 	
 	//Adjust simplex variables depending on settings
-	LEDs_in_strip = maxPixels / UPSAMPLE;
-	node_spacing = LEDs_in_strip / LEDs_for_simplex;
+  adjustSimplex();
+}
 
+void adjustSimplex()
+{
+  LEDs_in_strip = (maxPixels / UPSAMPLE) + UPSAMPLE;
+	node_spacing = LEDs_in_strip / LEDs_for_simplex;
 }
 
 void PinA(){

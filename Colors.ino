@@ -338,7 +338,7 @@ void SimplexNoisePatternInterpolated(float spaceinc, float timeinc, float yoffse
   }
   
   // Convert values from raw noise to scaled r,g,b and feed to strip
-  for (int i=0; i<LEDs_in_strip; i++) {
+  for (int i=0; i<LEDs_in_strip - UPSAMPLE; i++) {
     int r = currBrightness*((LED_array_red[i]*734 + 16)/255);
     int g = currBrightness*((LED_array_green[i]*734 + 16)/255);
     int b = currBrightness*((LED_array_blue[i]*734 + 16)/255);
