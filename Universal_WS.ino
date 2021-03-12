@@ -192,7 +192,6 @@ int brightnessRead = 0;
 ***************************************************************************************/
 
 #define MAX_PATTERNS 54
-byte upperLimit = MAX_PATTERNS; // max number of patterns (encoder)
 int lowerLimit = 1; // minimum number of patterns (encoder)
 int encoderButton = 49;
 byte favoritePattern = 2;
@@ -320,7 +319,7 @@ void setup()
 	//Read from the onboard persistant memory for last program position
 	lastSavedEncoderPosition = EEPROM.read(1);
 	
-	if (lastSavedEncoderPosition > upperLimit)
+	if (lastSavedEncoderPosition > MAX_PATTERNS)
 	{
 		lastSavedEncoderPosition = 1;
 	}
@@ -371,11 +370,11 @@ void loop()
 			if (encoderPos != oldEncPos)
 			{
 				//Keep encoder knob within upper && lower limits
-				if (encoderPos > upperLimit){
+				if (encoderPos > MAX_PATTERNS){
 					encoderPos = lowerLimit;
 				}
 				if (encoderPos < lowerLimit) {
-					encoderPos = upperLimit;
+					encoderPos = MAX_PATTERNS;
 				}
 
 				//Start new interfade

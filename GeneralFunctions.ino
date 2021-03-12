@@ -329,9 +329,6 @@ void readInputs(){
       //Disable menu
       settingsMenu = 0;
 
-      //Back to actual number of patterns, not hardware pixel max
-      upperLimit = MAX_PATTERNS;
-
       //Adjust simplex variables depending on new settings
       adjustSimplex();
 
@@ -404,9 +401,6 @@ void readInputs(){
         //Reset timer
         settingsTimer = 0;
 
-        //Encoder upper limit is now hardware max pixel limit 
-        upperLimit = HARDWARE_PIXELS;
-
         //Place us based on current max pixel setting
         encoderPos = maxPixels;
 
@@ -444,6 +438,11 @@ void setMaxPixelsMenu()
 	blue = 0;
 	UPSAMPLE = 1;
 
+  //Make sure we don't go too high
+  if (encoderPos > HARDWARE_PIXELS)
+  {
+		encoderPos = HARDWARE_PIXELS;
+	}
   //Make sure we don't go too low, some issues with simplex noise
 	if (encoderPos < 6)
 	{
