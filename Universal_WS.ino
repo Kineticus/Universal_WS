@@ -64,7 +64,11 @@ Version 0.9.1
   12/13/16 - Matt       - Added more colors and refined rainbow/noise flows.
 
 Version 0.9.2
-  12/15/16 - Brian      - Optimized output code for higher frame rate    
+  12/15/16 - Brian      - Optimized output code for higher frame rate
+							ported to WS2811 library at some point
+
+Version Origin
+   8/20/13 - Brian		- Burning Man 2013. 98 pixel LPD6803 control software "BUS 98"
 
 Future Improvements:
 
