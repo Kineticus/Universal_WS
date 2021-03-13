@@ -148,7 +148,7 @@ Future Improvements:
 
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(HARDWARE_PIXELS, PIN_DATA, NEO_RGB + NEO_KHZ800);
 
-byte ledTemp[(HARDWARE_PIXELS / 3)][3];	//Compressed frame buffer
+byte ledTemp[(HARDWARE_PIXELS / HARDWARE_UPSAMPLE)][3];	//Compressed frame buffer
 
 /***************************************************************************************
  						>>>>>> END OF CONFIGURATION <<<<<<

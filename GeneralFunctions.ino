@@ -379,10 +379,6 @@ void readInputs(){
           {
             favoritePattern = encoderPos;
             EEPROM.write(4, favoritePattern);
-
-            singleColor(currBrightness, currBrightness, currBrightness);
-            strip.show();
-            delay(50);
             singleColor(0, 0, 0);
             strip.show();
             delay(500);
