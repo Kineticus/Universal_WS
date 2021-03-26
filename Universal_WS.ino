@@ -431,17 +431,20 @@ void callColorFunction()
 			break;
 		case 2:
 			//Warm White > Neutral White
-			singleColor(currBrightness, (currBrightness/3) + (currBrightness * (float(currSpeed) / 400)), (currBrightness/12) + (currBrightness * (float(currSpeed) / 1200)));
+			//singleColor(currBrightness, (currBrightness/3) + (currBrightness * (float(currSpeed) / 400)), (currBrightness/12) + (currBrightness * (float(currSpeed) / 1200)));
+			singleColor(currBrightness, (currBrightness/3) + (currBrightness * (float(currSpeed) / 375)), (currBrightness/12) + (currBrightness * (float(currSpeed) / 1100)));
 			//singleColor(currBrightness, currBrightness/4, currBrightness/25);
 			break;
 		case 3:
 			//Neutral White > Day Light
-			singleColor(currBrightness, (currBrightness/2.5) + (currBrightness * (float(currSpeed) / 300)), (currBrightness/8) + (currBrightness * (float(currSpeed) / 350)));
+			//singleColor(currBrightness, (currBrightness/2.5) + (currBrightness * (float(currSpeed) / 300)), (currBrightness/8) + (currBrightness * (float(currSpeed) / 350)));
+			singleColor(currBrightness, (currBrightness/2.5) + (currBrightness * (float(currSpeed) / 300)), (currBrightness/8) + (currBrightness * (float(currSpeed) / 420)));
 			//singleColor(currBrightness, currBrightness/3.5,currBrightness/15);
 			break;
 		case 4:
 			//Day Light > Cool Light
-			singleColor(currBrightness, (currBrightness/2) + (currBrightness * (float(currSpeed) / 300)), (currBrightness/4) + (currBrightness * (float(currSpeed) / 150)));
+			//singleColor(currBrightness, (currBrightness/2) + (currBrightness * (float(currSpeed) / 300)), (currBrightness/4) + (currBrightness * (float(currSpeed) / 150)));
+			singleColor(currBrightness * 0.9, (currBrightness/2) + (currBrightness * (float(currSpeed) / 300)), (currBrightness/4) + (currBrightness * (float(currSpeed) / 250)));
 			//singleColor(currBrightness, currBrightness/3,currBrightness/10);
 			break;
 		case 5:
