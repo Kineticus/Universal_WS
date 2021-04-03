@@ -11,6 +11,8 @@ Description: Controls a WS281X based strands of LEDs. Accepts input from a Rotar
     
 Change log: 
 
+Version 2.2 - Brian - Slightly reduced white output for 12v regulated LEDs
+
 Version 2.1 - Brian - Added dyanmic pixel upscaling and provisioning from 6 up to hardware max
 	3/6/2021
 
@@ -141,8 +143,8 @@ Future Improvements:
 
 ***************************************************************************************/
 
-#define HARDWARE_PIXELS		150		//Max supported # of Pixels
-#define HARDWARE_UPSAMPLE	3		//Max Upsampling !!should not be adjusted!! Will auto adjust down.
+#define HARDWARE_PIXELS		100		//Max supported # of Pixels
+#define HARDWARE_UPSAMPLE	2		//Max Upsampling !!should not be adjusted!! Will auto adjust down.
 #define interfadeMax		8		//Fade time between patterns in frames
 #define PIN_DATA 			6		//WS28XX data line
 
@@ -195,7 +197,7 @@ int brightnessRead = 0;
   Encoder Variables
 ***************************************************************************************/
 
-#define MAX_PATTERNS 54
+#define MAX_PATTERNS 56
 int lowerLimit = 1; // minimum number of patterns (encoder)
 int encoderButton = 49;
 byte favoritePattern = 2;
@@ -501,158 +503,139 @@ void callColorFunction()
 			//Blue and White
 			SteadyAlternatingColors(0,0,currBrightness, currBrightness/2,currBrightness/2,currBrightness/2, (currSpeed + 1) / 6);
 			break;
-		// --- Rainbow Type Things ---
 		case 18:
+			//Red and White
+			SteadyAlternatingColors(currBrightness,0,0, currBrightness/2,currBrightness/2,currBrightness/2, (currSpeed + 1) / 6);
+			break;
+		case 19:
+			//Green and White
+			SteadyAlternatingColors(0,currBrightness,0, currBrightness/2,currBrightness/2,currBrightness/2, (currSpeed + 1) / 6);
+			break;
+		// --- Rainbow Type Things ---
+		case 20:
 			christmasLights();
 			effectFunction();
 			break;
-		case 19:
+		case 21:
 			//1/2 Rainbow
 			RainbowFlow(float(0.5 / maxPixels));
 			break;
-		case 20:
+		case 22:
 			//Full Rainbow
 			RainbowFlow(float(1.0 / maxPixels));
 			break;
-		case 21:
+		case 23:
 			//Whole strip go through single HSV colors
 			RainbowHsv();
 			break;
-		case 22:   
+		case 24:   
 			DualColorFlow();
 			break;
-		case 23:   
+		case 25:   
 			DualColorFlowFat();
 			break;
-		case 24:
+		case 26:
 			DualColorFlowFat2();
 			break;
-		case 25:
+		case 27:
 			DualColorFlowFat3();
 			break;
-		case 26:
+		case 28:
 			triFlag();
 			break;
-		case 27:
+		case 29:
 			colorWipe();
 			//DualColorFlowGreenFast();
 			break;
-		case 28:
+		case 30:
 			waterFlow();
 			break;
-		case 29:
+		case 31:
 			colorWipeBounce();
 			break;
-		case 30:
+		case 32:
 			TwinkleRainbow();
 			break;
-		case 31:
+		case 33:
 			PurpleGoldSparkle();
 			break;
-		case 32:
+		case 34:
 			PurpleGreen();
 			break;
-		case 33:
+		case 35:
 			sparkleRasta();
 			break;
-		case 34:
+		case 36:
 			GlowingAmberWhite();
 			break;
-		case 35:
-			GlowingAmber();
-			break;
-		case 36:
-			RainbowYoffset(.03);
-			break;
 		case 37:
-			RainbowYoffset(.03);
-			AmberSmatter(4);
+			GlowingAmber();
 			break;
 		case 38:
 			RainbowYoffset(.03);
-			AmberSmatter(7);
 			break;
 		case 39:
-			RainbowXoffset(.03);
-  			break;
-		case 40:
-			RainbowXoffset(.03);
+			RainbowYoffset(.03);
 			AmberSmatter(4);
+			break;
+		case 40:
+			RainbowYoffset(.03);
+			AmberSmatter(7);
 			break;
 		case 41:
 			RainbowXoffset(.03);
-			AmberSmatter(7);
-			break;
+  			break;
 		case 42:
-			RainbowYoffset(.07);
+			RainbowXoffset(.03);
+			AmberSmatter(4);
 			break;
 		case 43:
+			RainbowXoffset(.03);
+			AmberSmatter(7);
+			break;
+		case 44:
+			RainbowYoffset(.07);
+			break;
+		case 45:
 			RainbowYoffset(.07);
 			AmberSmatter(4);
 			break;
-		case 44:
+		case 46:
 			RainbowYoffset(.07); 
 			AmberSmatter(7);
 			break;
-		case 45:
+		case 47:
 			RainbowXoffset(.07); 
 			break;
-		case 46:
+		case 48:
 			RainbowXoffset(.07); 
 			AmberSmatter(4);
 			break;
-		case 47:
+		case 49:
 			RainbowXoffset(.07);	
 			AmberSmatter(7);
 			break;
-		case 48:
-			RainbowYoffset(.21);
-			break;
-		case 49:
-			RainbowYoffset(.21);
-			AmberSmatter(4);
-			break;
 		case 50:
 			RainbowYoffset(.21);
-			AmberSmatter(7);
 			break;
 		case 51:
-			RainbowXoffset(.21);
-			break;	
-		case 52:
-			RainbowXoffset(.21);
+			RainbowYoffset(.21);
 			AmberSmatter(4);
+			break;
+		case 52:
+			RainbowYoffset(.21);
+			AmberSmatter(7);
 			break;
 		case 53:
 			RainbowXoffset(.21);
-			AmberSmatter(7);
-			break;
+			break;	
 		case 54:
-			break;	
+			RainbowXoffset(.21);
+			AmberSmatter(4);
+			break;
 		case 55:
-			break;
-		case 56:
-			break;
-		case 57:
-			break;	
-		case 58:
-			
-			break;
-		case 59:
-			break;
-		case 60:
-			break;
-		case 61:
-			
-			break;
-		case 62:
-			
-			break;
-		case 63:
-
-			break;
-		case 64:
-
+			RainbowXoffset(.21);
+			AmberSmatter(7);
 			break;
 	}
 }
