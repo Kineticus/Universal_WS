@@ -1,12 +1,12 @@
 #  Chill WS2811 Pixel Control
 
-Arduino ATmega based WS2811 pixel control. Started life as a Burning Man 2011 project.
+Arduino ATmega328 based. Started life as a Burning Man 2011 project. Controls up to 150 pixels. 
 
 ## Install
 
 This project requires the [Arduino IDE](https://www.arduino.cc/en/Main/Software).
 
-1. Install [Arduino IDE](https://www.arduino.cc/en/Main/Software).
+1. Install [Arduino IDE](https://www.arduino.cc/en/Main/Software)
 2. Add the "Adafruit NeoPixel" library (Tools > Manage Libraries...)
 
 
