@@ -11,6 +11,9 @@ Description: Controls a WS281X based strands of LEDs. Accepts input from a Rotar
     
 Change log: 
 
+Version 2.3 - Brian - Granular fade scaling, can be increased when using 100 pixels or less
+					Improved out of bounds rollover for Simplex Noise functions 
+
 Version 2.2 - Brian - Slightly reduced white output for 12v regulated LEDs
 
 Version 2.1 - Brian - Added dyanmic pixel upscaling and provisioning from 6 up to hardware max
@@ -145,12 +148,14 @@ Future Improvements:
 
 #define HARDWARE_PIXELS		100		//Max supported # of Pixels
 #define HARDWARE_UPSAMPLE	2		//Max Upsampling !!should not be adjusted!! Will auto adjust down.
+#define FADE_UPSAMPLE		1		//Max Upsampling for Fade - 2 for >100 pixels, 1 for <100 
 #define interfadeMax		8		//Fade time between patterns in frames
 #define PIN_DATA 			6		//WS28XX data line
 
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(HARDWARE_PIXELS, PIN_DATA, NEO_RGB + NEO_KHZ800);
 
-byte ledTemp[(HARDWARE_PIXELS / HARDWARE_UPSAMPLE)][3];	//Compressed frame buffer
+//byte ledTemp[(HARDWARE_PIXELS / HARDWARE_UPSAMPLE)][3];	
+byte ledTemp[(HARDWARE_PIXELS / FADE_UPSAMPLE)][3]; //Compressed frame buffer if needed
 
 /***************************************************************************************
  						>>>>>> END OF CONFIGURATION <<<<<<
@@ -260,20 +265,8 @@ void setup()
   /***************************************************************************************
     General Setup
   ***************************************************************************************/
- 	//Serial.begin(115200);
+ 	Serial.begin(115200);
 
-	//Randomize the Simplex Noise values for lava lamp style patterns
-	//Create a random seed by reading nearby electric noise on the analog ports
-	randomSeed(analogRead(A6) + analogRead(A2) + analogRead(A3) + analogRead(A4) + analogRead (A5));
-	
- 	//Randomish x and y offset for simplex noise
- 	yoffset = analogRead(A4) + analogRead (A5);
- 	xoffset = analogRead(A5) + analogRead(A3);
-
-	//Seed color
-	h = random(500) / 1000.0;
-    hOld = h + random(500) / 1000.0;
-	
 	//Set the pins 
 	pinMode(PIN_POWER_A, OUTPUT);
 	digitalWrite(PIN_POWER_A, HIGH);
@@ -290,6 +283,22 @@ void setup()
 	digitalWrite(PIN_GROUND_B, LOW);
 
 	pinMode(PIN_SPEED, INPUT); 
+
+	//The value of these unconnected pins is used for random seed generation
+	pinMode(A6, INPUT);
+	pinMode(A7, INPUT);
+
+	//Randomize the Simplex Noise values for lava lamp style patterns
+	//Create a random seed by reading nearby electric noise on the analog ports
+	randomSeed(analogRead(PIN_SPEED) + analogRead (PIN_BRIGHT) + analogRead(A6) + analogRead (A7));
+	
+ 	//Randomish x and y offset for simplex noise
+ 	yoffset = analogRead(PIN_SPEED) + analogRead (PIN_BRIGHT) + analogRead(A6) + analogRead (A7);
+ 	xoffset = analogRead(PIN_SPEED) + analogRead (PIN_BRIGHT) + analogRead(A6) + analogRead (A7);
+
+	//Seed color
+	h = random(500) / 1000.0;
+    hOld = h + random(500) / 1000.0;
 
   /***************************************************************************************
     Encoder Setup

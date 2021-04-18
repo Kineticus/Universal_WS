@@ -55,9 +55,9 @@ void smoothFade(byte fade)
 {
   for (int i = 0; i < maxPixels; i++)
   {
-    red = (float(ledTemp[i / UPSAMPLE][0] / 255.0) * fade) + ((float(strip.getPixelColor(i) >> 16 & 0xff) / 255.0) * (255 - fade));
-    green = (float(ledTemp[i / UPSAMPLE][1] / 255.0) * fade) + ((float(strip.getPixelColor(i) >> 8 & 0xff) / 255.0) * (255 - fade));
-    blue = (float(ledTemp[i / UPSAMPLE][2] / 255.0) * fade) + ((float(strip.getPixelColor(i) & 0xff) / 255.0) * (255 - fade));
+    red = (float(ledTemp[i / FADE_UPSAMPLE][0] / 255.0) * fade) + ((float(strip.getPixelColor(i) >> 16 & 0xff) / 255.0) * (255 - fade));
+    green = (float(ledTemp[i / FADE_UPSAMPLE][1] / 255.0) * fade) + ((float(strip.getPixelColor(i) >> 8 & 0xff) / 255.0) * (255 - fade));
+    blue = (float(ledTemp[i / FADE_UPSAMPLE][2] / 255.0) * fade) + ((float(strip.getPixelColor(i) & 0xff) / 255.0) * (255 - fade));
 
     strip.setPixelColor(i, red, green, blue);
   }  
@@ -68,24 +68,24 @@ void smoothFadeBegin()
   interfade = interfadeMax;
 
   //Copy current LED values to temp for fading
-  for (int i = 0; i < (maxPixels / UPSAMPLE); i++)
+  for (int i = 0; i < (maxPixels / FADE_UPSAMPLE); i++)
   {	
     red = 0;
     green = 0;
     blue = 0;
 
-    //Add values of lights for each UPSAMPLE range
-    for (int u = 0; u < UPSAMPLE; u++)
+    //Add values of lights for each FADE_UPSAMPLE range
+    for (int u = 0; u < FADE_UPSAMPLE; u++)
     {
-      red += (strip.getPixelColor(u + i * UPSAMPLE) >> 16 & 0xff);
-      green += ((strip.getPixelColor(u + i * UPSAMPLE) >> 8) & 0xff);
-      blue += (strip.getPixelColor(u + i * UPSAMPLE) & 0xff);
+      red += (strip.getPixelColor(u + i * FADE_UPSAMPLE) >> 16 & 0xff);
+      green += ((strip.getPixelColor(u + i * FADE_UPSAMPLE) >> 8) & 0xff);
+      blue += (strip.getPixelColor(u + i * FADE_UPSAMPLE) & 0xff);
     }
 
-    //Store the values, averaged if UPSAMPLEd
-    ledTemp[i][0] = red / UPSAMPLE;
-    ledTemp[i][1] = green / UPSAMPLE;
-    ledTemp[i][2] = blue / UPSAMPLE;
+    //Store the values, averaged if FADE_UPSAMPLEd
+    ledTemp[i][0] = red / FADE_UPSAMPLE;
+    ledTemp[i][1] = green / FADE_UPSAMPLE;
+    ledTemp[i][2] = blue / FADE_UPSAMPLE;
   }
 }
 
@@ -370,7 +370,7 @@ void readInputs(){
             //Let go off button?
             if (digitalRead(4) == true)
             {
-              i = maxPixels;
+              i = maxPixels; //Exit for loop
             }
           }
 
@@ -379,6 +379,8 @@ void readInputs(){
           {
             favoritePattern = encoderPos;
             EEPROM.write(4, favoritePattern);
+
+            //Create a blink to let user know
             singleColor(0, 0, 0);
             strip.show();
             delay(500);

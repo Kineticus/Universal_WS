@@ -33,11 +33,13 @@ void RainbowYoffset(float spaceIncrement){
   yoffset += timeinc; 
   //xoffset += timeinc;
   SimplexNoisePatternInterpolated(spaceIncrement, timeinc, yoffset, xoffset);    
+  checkOffset();
 }
 void RainbowXoffset(float spaceIncrement){
   timeinc = (0.00005 * currSpeed);
-  xoffset += timeinc;
-  SimplexNoisePatternInterpolated(spaceIncrement, timeinc, yoffset, xoffset);    
+  xoffset -= timeinc;
+  SimplexNoisePatternInterpolated(spaceIncrement, timeinc, yoffset, xoffset);
+  checkOffset();    
 }
 void RainbowMovingPiece(){
   if (currMillis < millis())
@@ -375,27 +377,43 @@ void SimplexNoisePatternInterpolated(float spaceinc, float timeinc, float yoffse
       break;
     }
   }
-        
-  if (yoffset >= 16000)
+}
+
+void checkOffset()
+{
+    //Keep noise within bounds    
+  if (yoffset > 15800)
   {
-    yoffset = -26000;
+    yoffset = -15800;
+    smoothFadeBegin();
   }
 
-  if (yoffset <= -26000)
+  if (yoffset < -15800)
   {
-    yoffset = 16000;
+    yoffset = 15800;
+    smoothFadeBegin();
   }
 
-  if (xoffset >= 16000)
+  //This overflowed before 16000, or hit and overflowed at -16000
+  if (xoffset > 15800)
   {
-    xoffset = -16000;
+    xoffset = -15800;
+    smoothFadeBegin();
   }
 
-  if (xoffset <= -16000)
+  if (xoffset < -15800)
   {
-    xoffset = 16000;
+    xoffset = 15800;
+    smoothFadeBegin();
   }
 
+  // Print coordinates on Simplex Noise grid  
+  /* 
+  Serial.print("x: ");
+  Serial.print(xoffset);
+  Serial.print(",  y: ");
+  Serial.println(yoffset);
+  */
 }
 
 //NEW SHIT
