@@ -58,10 +58,10 @@ This project requires the [Arduino IDE](https://www.arduino.cc/en/Main/Software)
 22.	Half Rainbow
 23.	Full Rainbow
 24.	Solid Rainbow
-25.	Two Color
-26.	Two Color Wide 1
-27.	Two Color Wide 2
-28.	Two Color Wide 3
+25.	Two Color Wide 1 (Small Spacing)
+26.	Two Color Wide 2 (First Complement)
+27.	Two Color Wide 3 (Second Complement)
+28.	Two Color Wide 4 (Third Complement)
 29.	Three Color
 30.	Color Wipe
 31.	Water Flow
