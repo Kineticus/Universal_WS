@@ -134,7 +134,7 @@ void SteadyAlternatingColors(byte r1, byte g1, byte b1, byte r2, byte g2, byte b
   Rainbow Flow Colors
 ***************************************************************************************/
 void RainbowFlow(float spaceBetween){
-	h = h - (currSpeed * .0001);
+	h = h - (currSpeed * .00001);
 	if (h > 1){
 		h -= 1;
 	}
@@ -204,7 +204,7 @@ void DualColorFlow(){
      
 }
 
-void DualColorFlowFat(){
+void DualColorFlowFat(float Spacing){
     h = h + (currSpeed * .00001);//increment to make faster
     if (h > 1){
       h -= 1;
@@ -215,7 +215,7 @@ void DualColorFlowFat(){
 
     float hTemp = h;
 
-    hTemp = h + .5; //space between colors
+    hTemp = h + Spacing; //space between colors
     
     if (hTemp > 1){
       hTemp -= 1;
@@ -228,15 +228,15 @@ void DualColorFlowFat(){
 
     hsv2rgb(float(hTemp), 1, (float(currBrightness)/255.0), red2, green2, blue2);
   
-    for(uint16_t i=0; i<maxPixels; i=i+16) {
-      for(uint16_t ii=i; ii<(i+8); ii++)
+    for(uint16_t i=0; i<maxPixels; i=i+10) {
+      for(uint16_t ii=i; ii<(i+5); ii++)
       {
         if (ii < maxPixels)
         {
           strip.setPixelColor(ii, strip.Color(red,green,blue));
         }
       }
-      for(uint16_t ii=i+8; ii<(i+16); ii++)
+      for(uint16_t ii=i+5; ii<(i+10); ii++)
       {
         if (ii < maxPixels)
         {
@@ -461,8 +461,13 @@ void sparkleRasta(){
     {
       currMillis = millis() + (100 - currSpeed);
       hTemp = random(maxPixels);
+
+      red = (strip.getPixelColor(hTemp) >> 16 & 0xff);
+      green = ((strip.getPixelColor(hTemp) >> 8) & 0xff);
+      blue = (strip.getPixelColor(hTemp) & 0xff);
+
       tempStep += 1;
-      if (tempStep > 9)
+      if (tempStep > 3)
       { 
         tempStep = 0;
       }
@@ -472,13 +477,13 @@ void sparkleRasta(){
         switch(tempStep)
         {
           case 0:
-            strip.setPixelColor(hTemp, strip.Color(currBrightness, 0, 0));
+            strip.setPixelColor(hTemp, strip.Color(currBrightness, green, blue));
             break;
-          case 3:
-            strip.setPixelColor(hTemp, strip.Color(0, currBrightness, 0));
+          case 1:
+            strip.setPixelColor(hTemp, strip.Color(red, currBrightness, blue));
             break;
-          case 6:
-            strip.setPixelColor(hTemp, strip.Color(currBrightness, currBrightness / 1.5, 0));
+          case 2:
+            strip.setPixelColor(hTemp, strip.Color(currBrightness, currBrightness / 1.5, blue));
             break;
         }
       } 
@@ -618,6 +623,8 @@ void PurpleGreen(){
   {
     currMillis = millis() + (100 - currSpeed);
     hTemp = random(maxPixels);
+
+    
     tempStep += 1;
     if (tempStep > 1)
     {
@@ -735,7 +742,8 @@ void colorWipe(){
         h = h - 1;
       }
     }
-    currMillis = millis() + (100 - currSpeed) * 10;
+    currMillis = millis() + (102 - currSpeed) * 20;
+    smoothFadeBegin();
   }
   hsv2rgb(float(h), 1, (float(currBrightness)/255.0), red, green, blue);
 
@@ -791,7 +799,8 @@ void colorWipeBounce(){
     }
 
     //Set delay based on speed knob
-    currMillis = millis() + (100 - currSpeed) * 10;
+    currMillis = millis() + (102 - currSpeed) * 20;
+    smoothFadeBegin();
   }
   
   hsv2rgb(float(h), 1, (float(currBrightness)/255.0), red, green, blue);
@@ -1069,7 +1078,7 @@ void TwinkleRainbow()
 {
   if (currMillis < millis())
     {
-      currMillis = millis() + (255 - (currSpeed * 2));
+      currMillis = millis() + (100 - (currSpeed * 2));
       hTemp = random(maxPixels);
       h += .0001 * currSpeed;
       if (h > 1)

@@ -12,7 +12,8 @@ Description: Controls a WS281X based strands of LEDs. Accepts input from a Rotar
 Change log: 
 
 Version 2.3 - Brian - Granular fade scaling, can be increased when using 100 pixels or less
-					Improved out of bounds rollover for Simplex Noise functions 
+	4/24/2021			Improved out of bounds rollover for Simplex Noise functions
+						Speed adjustments / Pattern Updates
 
 Version 2.2 - Brian - Slightly reduced white output for 12v regulated LEDs
 
@@ -124,7 +125,8 @@ Future Improvements:
 #define PIN_GROUND_B	A4		//AUX Ground
 
 #define SENSITIVITY		5
-#define BRIGHT_FLOOR	2
+#define BRIGHT_FLOOR	2		//Deadspace for Brightness knob, higher values create more space
+#define SPEED_FLOOR		15		//Deadspace for Speed knob, lower values reduce space
 
 /***************************************************************************************
   !!!! >>>>> LOOK HERE <<<<<< !!!! ----- P I X E L   W I R I N G    S E T U P
@@ -486,39 +488,40 @@ void callColorFunction()
 		// --- Two Colors ---
 		case 11:
 			//Blue and Amber
-			SteadyAlternatingColors(0,0,currBrightness, currBrightness, currBrightness/5, 0, (currSpeed + 1) / 6);
+			SteadyAlternatingColors(0,0,currBrightness, currBrightness, currBrightness/5, 0, (currSpeed + 1) / 4);
 			//SparkleBlueGreen();
 			break;
 		case 12:
 			//Blue and Green
-			SteadyAlternatingColors(0,0,currBrightness, 0, currBrightness, 0, (currSpeed + 1) / 6);break;
+			SteadyAlternatingColors(0,0,currBrightness, 0, currBrightness, 0, (currSpeed + 1) / 4);
+			break;
 		case 13:
 			//Purple and gold
-			SteadyAlternatingColors(currBrightness,0,currBrightness/1.5, currBrightness, currBrightness/3, 0, (currSpeed + 1) / 6);
+			SteadyAlternatingColors(currBrightness,0,currBrightness/1.5, currBrightness, currBrightness/3, 0, (currSpeed + 1) / 4);
 			break;
 		case 14:
 			//White and Amber
-			SteadyAlternatingColors(currBrightness/2,currBrightness/2,currBrightness/3, currBrightness, currBrightness/4, 0, (currSpeed + 1) / 6);
-		break;
+			SteadyAlternatingColors(currBrightness/2,currBrightness/2,currBrightness/3, currBrightness, currBrightness/4, 0, (currSpeed + 1) / 4);
+			break;
 		case 15:
 			//Green and Red
-			SteadyAlternatingColors(0,currBrightness,0, currBrightness, 0, 0, (currSpeed + 1) / 6);
+			SteadyAlternatingColors(0,currBrightness,0, currBrightness, 0, 0, (currSpeed + 1) / 4);
 			break;
 		case 16:
 			//Pink and Blue
-			SteadyAlternatingColors(currBrightness,0,currBrightness/2, 0, 0, currBrightness, (currSpeed + 1) / 6);
+			SteadyAlternatingColors(currBrightness,0,currBrightness/2, 0, 0, currBrightness, (currSpeed + 1) / 4);
 			break;
 		case 17:
 			//Blue and White
-			SteadyAlternatingColors(0,0,currBrightness, currBrightness/2,currBrightness/2,currBrightness/2, (currSpeed + 1) / 6);
+			SteadyAlternatingColors(0,0,currBrightness, currBrightness/2,currBrightness/2,currBrightness/2, (currSpeed + 1) / 4);
 			break;
 		case 18:
 			//Red and White
-			SteadyAlternatingColors(currBrightness,0,0, currBrightness/2,currBrightness/2,currBrightness/2, (currSpeed + 1) / 6);
+			SteadyAlternatingColors(currBrightness,0,0, currBrightness/2,currBrightness/2,currBrightness/2, (currSpeed + 1) / 4);
 			break;
 		case 19:
 			//Green and White
-			SteadyAlternatingColors(0,currBrightness,0, currBrightness/2,currBrightness/2,currBrightness/2, (currSpeed + 1) / 6);
+			SteadyAlternatingColors(0,currBrightness,0, currBrightness/2,currBrightness/2,currBrightness/2, (currSpeed + 1) / 4);
 			break;
 		// --- Rainbow Type Things ---
 		case 20:
@@ -538,16 +541,19 @@ void callColorFunction()
 			RainbowHsv();
 			break;
 		case 24:   
-			DualColorFlow();
+			DualColorFlowFat(0.2);
+			//DualColorFlow();
 			break;
 		case 25:   
-			DualColorFlowFat();
+			DualColorFlowFat(0.334);
 			break;
 		case 26:
-			DualColorFlowFat2();
+			DualColorFlowFat(0.5);
+			//DualColorFlowFat2();
 			break;
 		case 27:
-			DualColorFlowFat3();
+			DualColorFlowFat(0.667);
+			//DualColorFlowFat3();
 			break;
 		case 28:
 			triFlag();

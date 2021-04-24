@@ -12,7 +12,7 @@ void smoothOperator(){
   //filter noise
   if (((tempValue > brightnessValue + SENSITIVITY) || (tempValue + SENSITIVITY < brightnessValue)))
   {
-    //check minimum value - is 12 it?
+    //check minimum value 
     brightnessValue = tempValue;
     tempValue = constrain(tempValue, BRIGHT_FLOOR, 1005);
 
@@ -43,8 +43,8 @@ void smoothOperator(){
     {
       speedValue = tempValue;
 
-      tempValue = constrain(tempValue, 15, 1015);
-      tempValue = map(tempValue, 15, 1015, 100, 0);
+      tempValue = constrain(tempValue, SPEED_FLOOR, 1005);
+      tempValue = map(tempValue, SPEED_FLOOR, 1005, 100, 0);
       currSpeed = tempValue;
     }
     
