@@ -1,6 +1,6 @@
 #  Chill WS2811 Pixel Control
 
-Arduino ATmega328 based. Started life as a Burning Man 2011 project. Controls up to 150 pixels. 
+Arduino ATmega328 based. Started life as a Burning Man 2013 project. Controls up to 150 pixels in a relaxed manner. 
 
 ## Install
 
@@ -14,12 +14,12 @@ This project requires the [Arduino IDE](https://www.arduino.cc/en/Main/Software)
  
 1. Brightness Potentiometer
    - A0   Ground
-   - A1   5v
+   - A1   Vcc (5v or less)
    - A2   Wiper
   
 2. Speed Potentiometer
    - A3   Ground
-   - A4   5v
+   - A4   Vcc (5v or less)
    - A5   Wiper
   
 3. Rotary Encoder
