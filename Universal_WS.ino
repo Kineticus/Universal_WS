@@ -361,13 +361,13 @@ void loop()
 	readInputs();
 
 	//Framerate Control
-	if (fpsMillis < millis())
+	if ((millis() - fpsMillis) >= 16)
 	{
 		//Check to see if we are in regular run mode
 		if (settingsMenu == false)
 		{
 			//1 second = 1000 millis. 1000 millis / 60 fps = 16 millis between frames
-			fpsMillis = millis() + 16;
+			fpsMillis = millis();
 
 			//Check to see if we should write the current encoder value to EEPROM
 			if (writeDelay > 1)
