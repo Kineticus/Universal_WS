@@ -406,6 +406,7 @@ void checkOffset()
         //Generate new offset with random and environmental (pin voltages)
         yoffset = (analogRead(PIN_SPEED) + analogRead (PIN_BRIGHT) + analogRead(A6) + analogRead (A7)) - random(0, 8000);
  	      xoffset = (analogRead(PIN_SPEED) + analogRead (PIN_BRIGHT) + analogRead(A6) + analogRead (A7)) + random(0, 8000);
+        smoothFadeBegin();
         //Serial.println("------ Offset Reset -------");
       }
     }
