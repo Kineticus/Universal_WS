@@ -11,6 +11,9 @@ Description: Controls a WS281X based strands of LEDs. Accepts input from a Rotar
     
 Change log: 
 
+Version 2.6 - Brian - Actually fixed simplex noise turning white issue
+	6/29/2022
+
 Version 2.4 - Brian - Maybe finally fixed the simplex noise turning white issue
   12/4/2021
 
