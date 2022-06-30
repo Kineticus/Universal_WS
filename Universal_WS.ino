@@ -11,6 +11,9 @@ Description: Controls a WS281X based strands of LEDs. Accepts input from a Rotar
     
 Change log: 
 
+Version 2.4 - Brian - Maybe finally fixed the simplex noise turning white issue
+  12/4/2021
+
 Version 2.3 - Brian - Granular fade scaling, can be increased when using 100 pixels or less
 	4/24/2021			Improved out of bounds rollover for Simplex Noise functions
 						Speed adjustments / Pattern Updates
@@ -145,6 +148,7 @@ Future Improvements:
 
 	// Example for RGB Strip/Reel:
 	Adafruit_NeoPixel strip = Adafruit_NeoPixel(maxPixels, PIN_LED, NEO_GRB + NEO_KHZ800);
+  Adafruit_NeoPixel strip = Adafruit_NeoPixel(HARDWARE_PIXELS, PIN_DATA, NEO_RBG + NEO_KHZ800);
 
 ***************************************************************************************/
 
@@ -295,8 +299,9 @@ void setup()
 	randomSeed(analogRead(PIN_SPEED) + analogRead (PIN_BRIGHT) + analogRead(A6) + analogRead (A7));
 	
  	//Randomish x and y offset for simplex noise
- 	yoffset = analogRead(PIN_SPEED) + analogRead (PIN_BRIGHT) + analogRead(A6) + analogRead (A7);
- 	xoffset = analogRead(PIN_SPEED) + analogRead (PIN_BRIGHT) + analogRead(A6) + analogRead (A7);
+	checkOffset();
+ 	
+	//xoffset = 15000;
 
 	//Seed color
 	h = random(500) / 1000.0;

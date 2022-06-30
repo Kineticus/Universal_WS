@@ -339,6 +339,19 @@ void SimplexNoisePatternInterpolated(float spaceinc, float timeinc, float yoffse
     }
   }
   
+  /*
+  Serial.print("y: ");
+  Serial.print(yoffset);
+  Serial.print("   x: ");
+  Serial.print(xoffset); 
+  Serial.print("  R: ");
+  Serial.print(LED_array_red[0]*734 + 16);
+  Serial.print("  G: ");
+  Serial.print(LED_array_green[0]*734 + 16);
+  Serial.print("  B: ");
+  Serial.println(LED_array_blue[0]*734 + 16);
+  */
+ 
   // Convert values from raw noise to scaled r,g,b and feed to strip
   for (int i=0; i<LEDs_in_strip - UPSAMPLE; i++) {
     int r = currBrightness*((LED_array_red[i]*734 + 16)/255);
@@ -381,29 +394,50 @@ void SimplexNoisePatternInterpolated(float spaceinc, float timeinc, float yoffse
 
 void checkOffset()
 {
-    //Keep noise within bounds    
-  if (yoffset > 15800)
+  //Check for all zeros on several points to see if we are out of bounds.
+  //If so, set to new randmish area
+
+  if ((LED_array_red[0] == 0) && (LED_array_green[0] == 0) && (LED_array_blue[0] == 0))
   {
-    yoffset = -15800;
+    if ((LED_array_red[10] == 0) && (LED_array_green[10] == 0) && (LED_array_blue[10] == 0))
+    {
+      if ((LED_array_red[20] == 0) && (LED_array_green[20] == 0) && (LED_array_blue[20] == 0))
+      {
+        //Generate new offset with random and environmental (pin voltages)
+        yoffset = (analogRead(PIN_SPEED) + analogRead (PIN_BRIGHT) + analogRead(A6) + analogRead (A7)) - random(0, 8000);
+ 	      xoffset = (analogRead(PIN_SPEED) + analogRead (PIN_BRIGHT) + analogRead(A6) + analogRead (A7)) + random(0, 8000);
+        //Serial.println("------ Offset Reset -------");
+      }
+    }
+  }
+  
+  /*
+  //Keep noise within bounds    was prev. 15000 but had issues still
+  //Should change to a check of the all white condition (all values set to 0)
+  //Need to determine values generated when out of bounds and check for them
+  
+  if (yoffset > 10000)
+  {
+    yoffset = -10000;
     smoothFadeBegin();
   }
 
-  if (yoffset < -15800)
+  if (yoffset < -10000)
   {
-    yoffset = 15800;
+    yoffset = 10000;
     smoothFadeBegin();
   }
 
   //This overflowed before 16000, or hit and overflowed at -16000
-  if (xoffset > 15800)
+  if (xoffset > 10000)
   {
-    xoffset = -15800;
+    xoffset = -10000;
     smoothFadeBegin();
   }
 
-  if (xoffset < -15800)
+  if (xoffset < -10000)
   {
-    xoffset = 15800;
+    xoffset = 10000;
     smoothFadeBegin();
   }
 
