@@ -26,6 +26,10 @@ void smoothOperator(){
 
     currBrightness = tempValue;
 
+    #ifdef DEBUG
+      Serial.print("Brightness: ");
+      Serial.println(currBrightness);
+    #endif
   };
   
   if (SPEED_KNOB == 1)
@@ -39,13 +43,18 @@ void smoothOperator(){
       tempValue = map(tempValue, 1023, 0, 0, 1023);
     }
 
-    if (((tempValue > speedValue + SENSITIVITY) || (tempValue + SENSITIVITY < speedValue)))
+    if (((tempValue > speedValue + SENSITIVITY * 2) || (tempValue + SENSITIVITY * 2 < speedValue)))
     {
       speedValue = tempValue;
 
       tempValue = constrain(tempValue, SPEED_FLOOR, 1005);
       tempValue = map(tempValue, SPEED_FLOOR, 1005, 100, 0);
       currSpeed = tempValue;
+
+      #ifdef DEBUG
+        Serial.print("Speed: ");
+        Serial.println(currSpeed);
+      #endif
     }
     
   }
@@ -312,7 +321,7 @@ void readInputs(){
 	brightnessCount += 1;
 
 	if (SPEED_KNOB == 1)
-  	{
+  {
 		speedTotal += analogRead(PIN_SPEED);
 		speedCount += 1;
 	}
@@ -515,10 +524,15 @@ void readMaxPixels()
     favoritePattern = 2; //Warm White by default
   }
 
-	//Serial.println(maxPixels);
-	//Serial.println(UPSAMPLE);
-  //Serial.println(favoritePattern);
-	
+  #ifdef DEBUG
+    Serial.print("Pixels: ");
+    Serial.println(maxPixels);
+    Serial.print("Upsample: ");
+    Serial.println(UPSAMPLE);
+    Serial.print("Favorite Pattern: ");
+    Serial.println(favoritePattern - 1);
+	#endif
+
 	//Adjust simplex variables depending on settings
   adjustSimplex();
 }

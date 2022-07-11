@@ -407,7 +407,13 @@ void checkOffset()
         yoffset = (analogRead(PIN_SPEED) + analogRead (PIN_BRIGHT) + analogRead(A6) + analogRead (A7)) - random(0, 8000);
  	      xoffset = (analogRead(PIN_SPEED) + analogRead (PIN_BRIGHT) + analogRead(A6) + analogRead (A7)) + random(0, 8000);
         smoothFadeBegin();
-        //Serial.println("------ Offset Reset -------");
+        #ifdef DEBUG
+          Serial.println("----- Random Offset -----");
+          Serial.print("x: ");
+          Serial.print(xoffset);
+          Serial.print(",  y: ");
+          Serial.println(yoffset);
+        #endif
       }
     }
   }
@@ -442,12 +448,10 @@ void checkOffset()
     smoothFadeBegin();
   }
 
+  #ifdef DEBUG
   // Print coordinates on Simplex Noise grid  
   /* 
-  Serial.print("x: ");
-  Serial.print(xoffset);
-  Serial.print(",  y: ");
-  Serial.println(yoffset);
+
   */
 }
 

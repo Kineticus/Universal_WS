@@ -11,11 +11,14 @@ Description: Controls a WS281X based strands of LEDs. Accepts input from a Rotar
     
 Change log: 
 
-Version 2.6 - Brian - Actually fixed simplex noise turning white issue
+Version 2.6 - Brian - Added option debug serial output
+	7/10/2022
+
+Version 2.5 - Brian - Actually fixed simplex noise turning white issue
 	6/29/2022
 
 Version 2.4 - Brian - Maybe finally fixed the simplex noise turning white issue
-  12/4/2021
+  	12/4/2021
 
 Version 2.3 - Brian - Granular fade scaling, can be increased when using 100 pixels or less
 	4/24/2021			Improved out of bounds rollover for Simplex Noise functions
@@ -93,6 +96,12 @@ Future Improvements:
 ***************************************************************************************/
 #include <Adafruit_NeoPixel.h>	//WS type strips
 #include <EEPROM.h>        		//Persistent Memory
+
+
+/***************************************************************************************
+  Debugging Serial Monitor Output, 115200 baud
+***************************************************************************************/
+//#define DEBUG
 
 
 /***************************************************************************************
@@ -274,7 +283,10 @@ void setup()
   /***************************************************************************************
     General Setup
   ***************************************************************************************/
- 	Serial.begin(115200);
+ 	#ifdef DEBUG
+ 		Serial.begin(115200);
+		Serial.println("Powering On");
+	#endif
 
 	//Set the pins 
 	pinMode(PIN_POWER_A, OUTPUT);
@@ -348,6 +360,11 @@ void setup()
 	{
 		lastSavedEncoderPosition = 1;
 	}
+
+	#ifdef DEBUG
+		Serial.print("Last Pattern: ");
+		Serial.println(lastSavedEncoderPosition - 1)
+	#endif
 	
 	//Set program to value from memory (a new board has 0 in EEPROM for each slot)
 	encoderPos = lastSavedEncoderPosition;
@@ -410,6 +427,11 @@ void loop()
 				
 				//Update the oldEncPos value to current
 				oldEncPos = encoderPos;
+	
+				#ifdef DEBUG
+					Serial.print("Pattern: ");
+					Serial.println(encoderPos-1);
+				#endif
 			}
 
 			// display appropriate pattern
