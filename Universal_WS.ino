@@ -363,7 +363,7 @@ void setup()
 
 	#ifdef DEBUG
 		Serial.print("Last Pattern: ");
-		Serial.println(lastSavedEncoderPosition - 1)
+		Serial.println(lastSavedEncoderPosition - 1);
 	#endif
 	
 	//Set program to value from memory (a new board has 0 in EEPROM for each slot)
