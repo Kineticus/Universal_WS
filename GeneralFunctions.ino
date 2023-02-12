@@ -657,5 +657,3 @@ float SimplexNoise(float x, float y, float z) {
    
   return k_fn(hi) + k_fn(3 - hi - lo) + k_fn(lo) + k_fn(0);
 }
-
-

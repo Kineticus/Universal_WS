@@ -11,6 +11,9 @@ Description: Controls a WS281X based strands of LEDs. Accepts input from a Rotar
     
 Change log: 
 
+Version 2.7 - Brian - Added some new patterns and removed others
+	12/24/2022
+
 Version 2.6 - Brian - Added option debug serial output
 	7/10/2022
 
@@ -143,6 +146,9 @@ Future Improvements:
 #define BRIGHT_FLOOR	2		//Deadspace for Brightness knob, higher values create more space
 #define SPEED_FLOOR		15		//Deadspace for Speed knob, lower values reduce space
 
+#define SPACING_TRIPLE 	5.75	//5.75 for 50/100, 10 for 30
+#define SPACING_DOUBLE 	4		//4 for 50/100, 6.5 for 30
+
 /***************************************************************************************
   !!!! >>>>> LOOK HERE <<<<<< !!!! ----- P I X E L   W I R I N G    S E T U P
 
@@ -160,6 +166,8 @@ Future Improvements:
 
 	// Example for RGB Strip/Reel:
 	Adafruit_NeoPixel strip = Adafruit_NeoPixel(maxPixels, PIN_LED, NEO_GRB + NEO_KHZ800);
+
+  //Example for G50 Outdoor:
   Adafruit_NeoPixel strip = Adafruit_NeoPixel(HARDWARE_PIXELS, PIN_DATA, NEO_RBG + NEO_KHZ800);
 
 ***************************************************************************************/
@@ -220,7 +228,7 @@ int brightnessRead = 0;
   Encoder Variables
 ***************************************************************************************/
 
-#define MAX_PATTERNS 56
+#define MAX_PATTERNS 48
 int lowerLimit = 1; // minimum number of patterns (encoder)
 int encoderButton = 49;
 byte favoritePattern = 2;
@@ -475,7 +483,7 @@ void callColorFunction()
 		case 2:
 			//Warm White > Neutral White
 			//singleColor(currBrightness, (currBrightness/3) + (currBrightness * (float(currSpeed) / 400)), (currBrightness/12) + (currBrightness * (float(currSpeed) / 1200)));
-			singleColor(currBrightness, (currBrightness/3) + (currBrightness * (float(currSpeed) / 375)), (currBrightness/12) + (currBrightness * (float(currSpeed) / 1100)));
+			singleColor(currBrightness, (currBrightness/3) + (currBrightness * (float(currSpeed) / 375)), (currBrightness/12) + (currBrightness * (float(currSpeed) / 1000)));
 			//singleColor(currBrightness, currBrightness/4, currBrightness/25);
 			break;
 		case 3:
@@ -486,8 +494,8 @@ void callColorFunction()
 			break;
 		case 4:
 			//Day Light > Cool Light
-			//singleColor(currBrightness, (currBrightness/2) + (currBrightness * (float(currSpeed) / 300)), (currBrightness/4) + (currBrightness * (float(currSpeed) / 150)));
-			singleColor(currBrightness * 0.9, (currBrightness/2) + (currBrightness * (float(currSpeed) / 300)), (currBrightness/4) + (currBrightness * (float(currSpeed) / 250)));
+			singleColor(currBrightness, (currBrightness/1.75) + (currBrightness * (float(currSpeed) / 250)), (currBrightness/3.5) + (currBrightness * (float(currSpeed) / 275)));
+			//singleColor(currBrightness * 0.9, (currBrightness/2) + (currBrightness * (float(currSpeed) / 300)), (currBrightness/4) + (currBrightness * (float(currSpeed) / 250)));
 			//singleColor(currBrightness, currBrightness/3,currBrightness/10);
 			break;
 		case 5:
@@ -518,64 +526,67 @@ void callColorFunction()
 		// --- Two Colors ---
 		case 11:
 			//Blue and Amber
-			SteadyAlternatingColors(0,0,currBrightness, currBrightness, currBrightness/5, 0, (currSpeed + 1) / 4);
+			SteadyAlternatingColors(0,0,currBrightness, currBrightness, currBrightness/5, 0, (currSpeed + 1) / SPACING_DOUBLE);
 			//SparkleBlueGreen();
 			break;
 		case 12:
 			//Blue and Green
-			SteadyAlternatingColors(0,0,currBrightness, 0, currBrightness, 0, (currSpeed + 1) / 4);
+			SteadyAlternatingColors(0,0,currBrightness, 0, currBrightness, 0, (currSpeed + 1) / SPACING_DOUBLE);
 			break;
 		case 13:
 			//Purple and gold
-			SteadyAlternatingColors(currBrightness,0,currBrightness/1.5, currBrightness, currBrightness/3, 0, (currSpeed + 1) / 4);
+			SteadyAlternatingColors(currBrightness,0,currBrightness/1.5, currBrightness, currBrightness/3, 0, (currSpeed + 1) / SPACING_DOUBLE);
 			break;
 		case 14:
 			//White and Amber
-			SteadyAlternatingColors(currBrightness/2,currBrightness/2,currBrightness/3, currBrightness, currBrightness/4, 0, (currSpeed + 1) / 4);
+			SteadyAlternatingColors(currBrightness/2,currBrightness/2,currBrightness/3, currBrightness, currBrightness/4, 0, (currSpeed + 1) / SPACING_DOUBLE);
 			break;
 		case 15:
 			//Green and Red
-			SteadyAlternatingColors(0,currBrightness,0, currBrightness, 0, 0, (currSpeed + 1) / 4);
+			SteadyAlternatingColors(0,currBrightness,0, currBrightness, 0, 0, (currSpeed + 1) / SPACING_DOUBLE);
 			break;
 		case 16:
 			//Pink and Blue
-			SteadyAlternatingColors(currBrightness,0,currBrightness/2, 0, 0, currBrightness, (currSpeed + 1) / 4);
+			SteadyAlternatingColors(currBrightness,0,currBrightness/2, 0, 0, currBrightness, (currSpeed + 1) / SPACING_DOUBLE);
 			break;
 		case 17:
 			//Blue and White
-			SteadyAlternatingColors(0,0,currBrightness, currBrightness/2,currBrightness/2,currBrightness/2, (currSpeed + 1) / 4);
+			SteadyAlternatingColors(0,0,currBrightness, currBrightness/2,currBrightness/2,currBrightness/2, (currSpeed + 1) / SPACING_DOUBLE);
 			break;
 		case 18:
 			//Red and White
-			SteadyAlternatingColors(currBrightness,0,0, currBrightness/2,currBrightness/2,currBrightness/2, (currSpeed + 1) / 4);
+			SteadyAlternatingColors(currBrightness,0,0, currBrightness/2,currBrightness/2,currBrightness/2, (currSpeed + 1) / SPACING_DOUBLE);
 			break;
 		case 19:
 			//Green and White
-			SteadyAlternatingColors(0,currBrightness,0, currBrightness/2,currBrightness/2,currBrightness/2, (currSpeed + 1) / 4);
+			SteadyAlternatingColors(0,currBrightness,0, currBrightness/2,currBrightness/2,currBrightness/2, (currSpeed + 1) / SPACING_DOUBLE);
 			break;
-		// --- Rainbow Type Things ---
 		case 20:
-			christmasLights();
-			effectFunction();
+			//Green and Gold
+     	 	SteadyAlternatingColors(0,currBrightness * 1,0, currBrightness, currBrightness * .33, currBrightness * .00, (currSpeed + 1) / SPACING_DOUBLE);
 			break;
 		case 21:
-			//1/2 Rainbow
-			RainbowFlow(float(0.5 / maxPixels));
+			//Teal and Bronze
+      		SteadyAlternatingColors(0,currBrightness * 1,currBrightness * .42, currBrightness, currBrightness * .33, currBrightness * .05, (currSpeed + 1) / SPACING_DOUBLE);
 			break;
 		case 22:
-			//Full Rainbow
-			RainbowFlow(float(1.0 / maxPixels));
-			break;
-		case 23:
 			//Whole strip go through single HSV colors
 			RainbowHsv();
 			break;
+		case 23:
+			//1/2 Rainbow
+			RainbowFlow(float(0.5 / maxPixels));
+			break;
 		case 24:   
-			DualColorFlowFat(0.2);
+			//Full Rainbow
+			RainbowFlow(float(1.0 / maxPixels));
+			
+			//DualColorFlowFat(0.2);
 			//DualColorFlow();
 			break;
 		case 25:   
-			DualColorFlowFat(0.334);
+			
+			triFlag();
 			break;
 		case 26:
 			DualColorFlowFat(0.5);
@@ -586,97 +597,118 @@ void callColorFunction()
 			//DualColorFlowFat3();
 			break;
 		case 28:
-			triFlag();
+			DualColorFlowFat(0.334);
 			break;
 		case 29:
-			colorWipe();
+			colorWipeBounce();
 			//DualColorFlowGreenFast();
 			break;
 		case 30:
-			waterFlow();
+			colorWipe();
+			//waterFlow();
 			break;
 		case 31:
-			colorWipeBounce();
+			//Valentines Day
+			//White, Pink, and Purple
+      		SteadyAlternatingColorsThree(currBrightness/2,currBrightness/2,currBrightness/2, currBrightness,0,currBrightness / 8, currBrightness, 0, currBrightness , (currSpeed + 1) / SPACING_TRIPLE);
 			break;
 		case 32:
-			TwinkleRainbow();
+			//St Patrick's Day
+      		//Green, Gold, and White
+      		SteadyAlternatingColorsThree(0,currBrightness,0, currBrightness,currBrightness/3,currBrightness / 50, currBrightness / 2, currBrightness / 2, currBrightness / 2, (currSpeed + 1) / SPACING_TRIPLE);
 			break;
 		case 33:
-			PurpleGoldSparkle();
+			//Easter
+			//Teal, Yellow, and Purple
+      		SteadyAlternatingColorsThree(0,currBrightness,currBrightness/2, currBrightness,currBrightness / 3, 0, currBrightness, 0, currBrightness, (currSpeed + 1) / SPACING_TRIPLE);
 			break;
 		case 34:
-			PurpleGreen();
+			//April 20th
+			//Red, Yellow, and Green
+			SteadyAlternatingColorsThree(currBrightness,0,0, currBrightness,currBrightness/4,0, 0, currBrightness, 0, (currSpeed + 1) / SPACING_TRIPLE);
 			break;
 		case 35:
-			sparkleRasta();
+			//Father's Day
+			//Blue, White, and Teal
+			SteadyAlternatingColorsThree(0,0,currBrightness, currBrightness/2,currBrightness/2,currBrightness/2, 0, currBrightness / 2, currBrightness / 2, (currSpeed + 1) / SPACING_TRIPLE);
 			break;
 		case 36:
-			GlowingAmberWhite();
+			//July 4th
+			//Red, White, and Blue
+			SteadyAlternatingColorsThree(currBrightness,0,0, currBrightness/2,currBrightness/2,currBrightness/2, 0, 0, currBrightness, (currSpeed + 1) / SPACING_TRIPLE);
 			break;
 		case 37:
-			GlowingAmber();
+			//Maryland
+      		//Red, Yellow, and White
+      		SteadyAlternatingColorsThree(currBrightness,0,0, currBrightness,currBrightness/5,0, currBrightness / 2, currBrightness / 2, currBrightness / 2, (currSpeed + 1) / SPACING_TRIPLE);			
 			break;
 		case 38:
-			RainbowYoffset(.03);
+			//Halloween
+			//Purple, Orange, and Green
+			SteadyAlternatingColorsThree(currBrightness,0,currBrightness / 3, currBrightness,currBrightness/7,0, 0, currBrightness, 0, (currSpeed + 1) / SPACING_TRIPLE);
 			break;
 		case 39:
-			RainbowYoffset(.03);
-			AmberSmatter(4);
+			//Autumn
+			//Red, Orange, and Yellow
+			SteadyAlternatingColorsThree(currBrightness,0,0, currBrightness,currBrightness/7,0, currBrightness, currBrightness / 2, 0, (currSpeed + 1) / SPACING_TRIPLE);
 			break;
 		case 40:
-			RainbowYoffset(.03);
-			AmberSmatter(7);
+			//Christmas
+			//Red, White, and Green
+			SteadyAlternatingColorsThree(currBrightness,0,0, currBrightness/2,currBrightness/2,currBrightness/2, 0, currBrightness, 0, (currSpeed + 1) / SPACING_TRIPLE);			
 			break;
 		case 41:
-			RainbowXoffset(.03);
-  			break;
+			//Christmas Lights
+			christmasLights();
+			effectFunction();
+			break;
 		case 42:
-			RainbowXoffset(.03);
-			AmberSmatter(4);
+			//Tibet Lights
+			tibetLights();
+			effectFunction();
+			
 			break;
 		case 43:
-			RainbowXoffset(.03);
-			AmberSmatter(7);
+			GlowingAmber();
+			//RainbowXoffset(.03);
+			//AmberSmatter(7);
 			break;
 		case 44:
-			RainbowYoffset(.07);
+			RainbowYoffset(.21);
 			break;
 		case 45:
-			RainbowYoffset(.07);
+			RainbowYoffset(.21);
 			AmberSmatter(4);
 			break;
 		case 46:
-			RainbowYoffset(.07); 
-			AmberSmatter(7);
+			RainbowXoffset(.21);
 			break;
-		case 47:
-			RainbowXoffset(.07); 
+		case 47: 
+			RainbowXoffset(.21);
+			AmberSmatter(4);
 			break;
 		case 48:
-			RainbowXoffset(.07); 
-			AmberSmatter(4);
 			break;
 		case 49:
-			RainbowXoffset(.07);	
-			AmberSmatter(7);
 			break;
 		case 50:
-			RainbowYoffset(.21);
+			
 			break;
 		case 51:
-			RainbowYoffset(.21);
-			AmberSmatter(4);
+     		
 			break;
 		case 52:
-			RainbowYoffset(.21);
+      		RainbowYoffset(.21);
 			AmberSmatter(7);
 			break;
 		case 53:
-			RainbowXoffset(.21);
+     		//User this one
+			
 			break;	
 		case 54:
-			RainbowXoffset(.21);
-			AmberSmatter(4);
+      		//Use this one
+			
+			
 			break;
 		case 55:
 			RainbowXoffset(.21);

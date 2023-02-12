@@ -131,6 +131,44 @@ void SteadyAlternatingColors(byte r1, byte g1, byte b1, byte r2, byte g2, byte b
 }
 
 /***************************************************************************************
+  THREE Colors
+***************************************************************************************/
+void SteadyAlternatingColorsThree(byte r1, byte g1, byte b1, byte r2, byte g2, byte b2, byte r3, byte g3, byte b3, int Spacing)
+{
+  if (Spacing == 0)
+  {
+    Spacing = 1;
+  }
+  
+  for (int i = 0; i < maxPixels; i = i + (Spacing * 3))
+  {
+    for (int ii = 0; ii <= Spacing; ii++)
+    {
+      if ((i + ii) < maxPixels)
+      {
+        strip.setPixelColor(i + ii, strip.Color(r1, g1, b1));
+      }
+    }
+
+    for (int ii = 0; ii <= Spacing; ii++)
+    {
+      if ((i + ii + Spacing) < maxPixels)
+      {
+        strip.setPixelColor((i + Spacing) + ii, strip.Color(r2, g2, b2));
+      }
+    }
+
+    for (int ii = 0; ii <= Spacing; ii++)
+    {
+      if ((i + ii + Spacing) < maxPixels)
+      {
+        strip.setPixelColor((i + Spacing * 2) + ii, strip.Color(r3, g3, b3));
+      }
+    }
+  }
+}
+
+/***************************************************************************************
   Rainbow Flow Colors
 ***************************************************************************************/
 void RainbowFlow(float spaceBetween){
@@ -1422,6 +1460,39 @@ void christmasLights()
     if (i+4 < maxPixels)
     {
       strip.setPixelColor(i+4, strip.Color(currBrightness, 0, currBrightness / 2));
+    }
+  }
+
+}
+
+void tibetLights()
+{
+  for(int i = 0; i < maxPixels; i = i + 5)
+  {
+    if (i < maxPixels)
+    {
+      //Yellow
+      strip.setPixelColor(i, strip.Color(currBrightness, currBrightness / 4, 0));
+    }
+    if (i+1 < maxPixels)
+    {
+      //Blue
+      strip.setPixelColor(i+1, strip.Color(0, 0, currBrightness));
+    }
+    if (i+2 < maxPixels)
+    {
+      //White
+      strip.setPixelColor(i+2, strip.Color(currBrightness / 2, currBrightness / 2, currBrightness / 2));
+    }
+    if (i+3 < maxPixels)
+    {
+      //Red
+      strip.setPixelColor(i+3, strip.Color(currBrightness, 0, 0));
+    }
+    if (i+4 < maxPixels)
+    {
+      //Green
+      strip.setPixelColor(i+4, strip.Color(0, currBrightness, 0));
     }
   }
 
