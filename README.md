@@ -54,39 +54,31 @@ This project requires the [Arduino IDE](https://www.arduino.cc/en/Main/Software)
 18.	Blue & White
 19.	Red & White
 20.	Green & White
-21.	Christmas Lights
-22.	Half Rainbow
-23.	Full Rainbow
-24.	Solid Rainbow
-25.	Two Color Wide 1 (Small Spacing)
-26.	Two Color Wide 2 (First Complement)
-27.	Two Color Wide 3 (Second Complement)
-28.	Two Color Wide 4 (Third Complement)
-29.	Three Color
-30.	Color Wipe
-31.	Water Flow
-32.	Color Wipe Bounce
-33.	Sparkle Rainbow
-34.	Sparkle Purple & Gold
-35.	Sparkle Purple & Green
-36.	Sparkle Rasta
-37.	Sparkle Amber & White
-38.	Sparkle Amber
-39.	Flow - Y - Small - None
-40.	Flow - Y - Small - Every 4
-41.	Flow - Y - Small - Every 7
-42.	Flow - X - Small - None
-43.	Flow - X - Small - Every 4
-44.	Flow - X - Small - Every 7
-45.	Flow - Y - Medium - None
-46.	Flow - Y - Medium - Every 4
-47.	Flow - Y - Medium - Every 7
-48.	Flow - X - Medium - None
-49.	Flow - X - Medium - Every 4
-50.	Flow - X - Medium - Every 7
-51.	Flow - Y - Large - None
-52.	Flow - Y - Large - Every 4
-53.	Flow - Y - Large - Every 7
-54.	Flow - X - Large - None
-55.	Flow - X - Large - Every 4
-56.	Flow - X - Large - Every 7
+21.	Green & Gold
+22.	Teal & Bronze
+23.	Solid Rainbow
+24.	Half Rainbow
+25.	Full Rainbow
+26.	Triple Color
+27.	Two Color Wide (First Complement)
+28.	Two Color Wide (Second Complement)
+29.	Two Color Wide (Third Complement)
+30.	Color Wipe Bounce
+31.	Color Wipe
+32.	Valentine's Day
+33.	St. Patrick's Day
+34.	Easter
+35.	April 20th
+36.	Father's Day
+37.	4th of July
+38.	Maryland
+39.	Halloween
+40.	Authumn
+41. Christmas
+42.	Christmas Lights
+43.	Tibetan Flag
+44.	Glowing Amber
+45.	Flow - Y
+46.	Flow - Y - Orange Glow
+47.	Flow - X
+48.	Flow - X - Orange Glow
